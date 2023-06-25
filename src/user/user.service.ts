@@ -55,6 +55,7 @@ export class UserService {
 			avatar: `https://avatars.dicebear.com/api/identicon/${props.username}.svg`,
 			role: role,
 			refreshTokens: [],
+			apiKey: process.env.API_KEY,
 		}).save();
 
 		if (!created) throw new HttpException(`DATABASE_ERROR`, 500);

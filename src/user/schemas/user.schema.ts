@@ -29,6 +29,9 @@ export class User {
 	@Prop()
 	googleID?: string;
 
+	@Prop()
+	apiKey?: string;
+
 	@Prop({type: Types.ObjectId, ref: `Tracker`})
 	trackerID?: Tracker;
 

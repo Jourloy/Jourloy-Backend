@@ -12,7 +12,13 @@ services:
         env_file:
             - .env
         ports:
-            - "5000:5000"
+            - "6000:5000"
         restart: always
+
+    mongo:
+        container_name: Twyxify-Tracker-Mongo
+        image: mongo:latest
+        restart: always
+
 volumes:
     app:

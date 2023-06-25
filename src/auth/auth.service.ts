@@ -47,6 +47,7 @@ export class AuthService {
 
 		const updatedUser = await this.userService.updateTokens(user.id, newRefresh);
 
+		delete user.password;
 		delete user.refreshTokens;
 		delete user.googleID;
 
@@ -59,6 +60,23 @@ export class AuthService {
 		const [newRefresh, newAccess] = this.generateTokens(props.googleId, `google`);
 		const updatedUser = await this.userService.updateTokens(user._id, newRefresh);
 
+		delete user.password;
+		delete user.refreshTokens;
+		delete user.googleID;
+
+		return {refresh: newRefresh, access: newAccess, user: updatedUser};
+	}
+
+	public async apiLogin(apiKey?: string) {
+		if (!apiKey) throw new HttpException(`FORBIDDEN`, 403);
+
+		const user = await this.userService.get({apiKey: apiKey});
+		if (!user) throw new HttpException(`USER_NOT_FOUND`, 404);
+
+		const [newRefresh, newAccess] = this.generateTokens(user._id, `local`);
+		const updatedUser = await this.userService.updateTokens(user._id, newRefresh);
+
+		delete user.password;
 		delete user.refreshTokens;
 		delete user.googleID;
 

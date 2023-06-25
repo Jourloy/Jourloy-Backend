@@ -1,5 +1,5 @@
 import {Prop, Schema, SchemaFactory} from "@nestjs/mongoose";
-import mongoose, {Document, Types} from "mongoose";
+import {Document, Types} from "mongoose";
 import {User} from "../../user/schemas/user.schema";
 import {Spend} from "../../spend/schemas/spend.schema";
 
@@ -8,6 +8,9 @@ export type TrackerDocument = Tracker & Document;
 @Schema({timestamps: true})
 export class Tracker {
 	_id?: Types.ObjectId;
+
+	@Prop()
+	name: string;
 
 	@Prop()
 	limit: number;
