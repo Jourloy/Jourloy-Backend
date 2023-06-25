@@ -1,7 +1,7 @@
-import { Controller } from '@nestjs/common';
-import { SpendService } from './spend.service';
+import {Controller} from "@nestjs/common";
+import {SpendService} from "./spend.service";
 
-@Controller('spend')
+@Controller(`spend`)
 export class SpendController {
-  constructor(private readonly spendService: SpendService) {}
+	constructor(private readonly spendService: SpendService) {}
 }
