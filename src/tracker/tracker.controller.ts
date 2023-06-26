@@ -1,4 +1,4 @@
-import {Body, Controller, Get, Headers, Post, Res, UseGuards} from "@nestjs/common";
+import {Body, Controller, Get, Post, Res, UseGuards} from "@nestjs/common";
 import {TrackerService} from "./tracker.service";
 import {CurrentUser, ICurrentUser} from "src/decorators/user.decorator";
 import {Response} from "express";
