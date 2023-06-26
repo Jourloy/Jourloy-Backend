@@ -47,11 +47,25 @@ export class TrackerService {
 		return await this.trackerModel.find().populate(`owner`).exec();
 	}
 
-	public async getOwned(id: string) {
-		return await this.trackerModel.find({owner: id}).populate(`owner`).exec();
+	public async getOwned(id: string, type: string) {
+		const props: {googleID?: string; _id?: string} = {};
+		if (type === `google`) props.googleID = id;
+		if (type === `local`) props._id = id;
+
+		const user = await this.userService.get(props);
+		if (!user) return `USER_NOT_FOUND`;
+
+		return await this.trackerModel.findOne({owner: user._id}).populate(`owner`).exec();
 	}
 
-	public async getAllowed(id: string) {
+	public async getShared(id: string, type: string) {
+		const props: {googleID?: string; _id?: string} = {};
+		if (type === `google`) props.googleID = id;
+		if (type === `local`) props._id = id;
+
+		const user = await this.userService.get(props);
+		if (!user) return `USER_NOT_FOUND`;
+
 		return await this.trackerModel.find({sharedWithUsers: {$in: [id]}}).populate(`owner`).exec();
 	}
 }

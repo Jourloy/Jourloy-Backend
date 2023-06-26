@@ -36,8 +36,29 @@ export class TrackerController {
 	@Get(`/all`)
 	@Roles(Role.ADMIN)
 	@UseGuards(RoleGuard, JwtGuard)
-	async getAll(@Headers() headers, @CurrentUser() user: ICurrentUser) {
-		console.log(user);
+	async getAll() {
 		return await this.trackerService.getAll();
+	}
+
+	@Get(`/`)
+	@UseGuards(JwtGuard)
+	async getOwned(@CurrentUser() user: ICurrentUser, @Res() response: Response) {
+		const state = await this.trackerService.getOwned(user.id, user.type);
+		if (state === `USER_NOT_FOUND`) {
+			response.status(400).send(`USER_NOT_FOUND`);
+		} else {
+			response.status(200).send(state);
+		}
+	}
+
+	@Get(`/shared`)
+	@UseGuards(JwtGuard)
+	async getShared(@CurrentUser() user: ICurrentUser, @Res() response: Response) {
+		const state = await this.trackerService.getShared(user.id, user.type);
+		if (state === `USER_NOT_FOUND`) {
+			response.status(400).send(`USER_NOT_FOUND`);
+		} else {
+			response.status(200).send(state);
+		}
 	}
 }
