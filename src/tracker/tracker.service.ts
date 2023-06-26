@@ -3,6 +3,7 @@ import {InjectModel} from "@nestjs/mongoose";
 import {Tracker, TrackerDocument} from "./schemas/tracker.schema";
 import {Model} from "mongoose";
 import {UserService} from "src/user/user.service";
+import { Spend } from "src/spend/schemas/spend.schema";
 
 interface ITrackerCreate {
 	limit: number;
@@ -29,7 +30,7 @@ export class TrackerService {
 		const _tracker = await this.trackerModel.findOne({owner: user._id});
 		if (_tracker) return `TRACKER_ALREADY_EXISTS`;
 
-		const created = await new this.trackerModel({
+		return await new this.trackerModel({
 			name: `Лучший трекер`,
 			limit: data.limit,
 			dayLimit: data.dayLimit,
@@ -39,12 +40,10 @@ export class TrackerService {
 			owner: user,
 			sharedWithUsers: [],
 		}).save();
-
-		return created;
 	}
 
 	public async getAll() {
-		return await this.trackerModel.find().populate(`owner`).exec();
+		return await this.trackerModel.find().populate([`owner`, `spends`]).exec();
 	}
 
 	public async getOwned(id: string, type: string) {
@@ -55,7 +54,7 @@ export class TrackerService {
 		const user = await this.userService.get(props);
 		if (!user) return `USER_NOT_FOUND`;
 
-		return await this.trackerModel.findOne({owner: user._id}).populate(`owner`).exec();
+		return await this.trackerModel.findOne({owner: user._id}).populate([`owner`, `spends`]).exec();
 	}
 
 	public async getShared(id: string, type: string) {
@@ -66,6 +65,32 @@ export class TrackerService {
 		const user = await this.userService.get(props);
 		if (!user) return `USER_NOT_FOUND`;
 
-		return await this.trackerModel.find({sharedWithUsers: {$in: [id]}}).populate(`owner`).exec();
+		return await this.trackerModel.find({sharedWithUsers: {$in: [id]}}).populate([`owner`, `spends`]).exec();
+	}
+
+	public async addSpend(data: Spend, id: string, type: string) {
+		const props: {googleID?: string; _id?: string} = {};
+		if (type === `google`) props.googleID = id;
+		if (type === `local`) props._id = id;
+
+		const tracker = await this.getOwned(id, type);
+		if (!tracker) return `TRACKER_NOT_FOUND`;
+		if (tracker === `USER_NOT_FOUND`) return `USER_NOT_FOUND`;
+
+		tracker.spends.push(data);
+		return await tracker.save();
+	}
+
+	public async addPlannedSpend(data: Spend, id: string, type: string) {
+		const props: {googleID?: string; _id?: string} = {};
+		if (type === `google`) props.googleID = id;
+		if (type === `local`) props._id = id;
+
+		const tracker = await this.getOwned(id, type);
+		if (!tracker) return `TRACKER_NOT_FOUND`;
+		if (tracker === `USER_NOT_FOUND`) return `USER_NOT_FOUND`;
+
+		tracker.plannedSpends.push(data);
+		return await tracker.save();
 	}
 }

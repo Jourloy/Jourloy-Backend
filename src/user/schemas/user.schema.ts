@@ -1,6 +1,5 @@
 import {Prop, Schema, SchemaFactory} from "@nestjs/mongoose";
 import {Document, Types} from "mongoose";
-import {Tracker} from "../../tracker/schemas/tracker.schema";
 
 export type UserDocument = User & Document;
 
@@ -31,12 +30,6 @@ export class User {
 
 	@Prop()
 	apiKey?: string;
-
-	@Prop({type: Types.ObjectId, ref: `Tracker`})
-	trackerID?: Tracker;
-
-	@Prop({type: [Types.ObjectId], ref: `Tracker`})
-	sharedTrackersID?: Tracker[];
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

@@ -7,8 +7,10 @@ import {JwtGuard} from "src/guards/jwt.guard";
 import {RoleGuard} from "src/guards/role.guard";
 import {Roles} from "src/decorators/roles.decorator";
 import {Role} from "src/enums/role.enum";
+import { ApiTags } from "@nestjs/swagger";
 
 @Controller(`tracker`)
+@ApiTags(`Tracker`)
 export class TrackerController {
 	constructor(private readonly trackerService: TrackerService) {}
 
@@ -29,7 +31,7 @@ export class TrackerController {
 		} else if (state === `TRACKER_ALREADY_EXISTS`) {
 			response.status(400).send(`TRACKER_ALREADY_EXISTS`);
 		} else {
-			response.status(200).send(state);
+			response.status(200).json(state);
 		}
 	}
 
@@ -47,7 +49,7 @@ export class TrackerController {
 		if (state === `USER_NOT_FOUND`) {
 			response.status(400).send(`USER_NOT_FOUND`);
 		} else {
-			response.status(200).send(state);
+			response.status(200).json(state);
 		}
 	}
 
@@ -58,7 +60,7 @@ export class TrackerController {
 		if (state === `USER_NOT_FOUND`) {
 			response.status(400).send(`USER_NOT_FOUND`);
 		} else {
-			response.status(200).send(state);
+			response.status(200).json(state);
 		}
 	}
 }

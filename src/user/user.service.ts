@@ -86,7 +86,7 @@ export class UserService {
 		if (user.refreshTokens.length >= 10) user.refreshTokens.shift();
 		user.refreshTokens.push(token);
 
-		return await this.updateUser(user.id, user);
+		return await this.updateUser(user);
 	}
 
 	private async _checkAdmin() {
@@ -105,7 +105,7 @@ export class UserService {
 		return `✅ Admin created`;
 	}
 
-	private async updateUser(id: string, user: User) {
+	private async updateUser(user: User) {
 		const updated = await this.userModel
 			.findOneAndUpdate({_id: user._id}, {$set: {...user}})
 			.exec();

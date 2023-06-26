@@ -9,5 +9,6 @@ import { UserModule } from "src/user/user.module";
 	imports: [MongooseModule.forFeature([{name: Tracker.name, schema: TrackerSchema}]), UserModule],
 	controllers: [TrackerController],
 	providers: [TrackerService],
+	exports: [TrackerService],
 })
 export class TrackerModule {}

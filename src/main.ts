@@ -6,6 +6,7 @@ import pkg from "../package.json";
 import session from "express-session";
 import cookieParser from "cookie-parser";
 import MongoStore from "connect-mongo";
+import {ValidationPipe} from "@nestjs/common";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 require(`dotenv`).config();
@@ -36,6 +37,7 @@ async function bootstrap() {
 		credentials: true,
 	});
 	app.use(helmet());
+	app.useGlobalPipes(new ValidationPipe());
 
 	// Sessions
 

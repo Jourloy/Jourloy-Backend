@@ -21,7 +21,7 @@ import {AuthMiddleware} from "./middlewares/auth.middleware";
 			useFactory: async (configService: ConfigService) => ({
 				uri: `mongodb://${configService.get<string>(
 					`MONGO_HOST`
-				)}/${configService.get<string>(`MONGO_DATABASE`)}-dev`,
+				)}/${configService.get<string>(`MONGO_DATABASE`)}${process.env.NODE_ENV !== `production` ? `-dev` : ``}`,
 			}),
 			inject: [ConfigService],
 		}),
