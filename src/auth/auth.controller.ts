@@ -13,7 +13,7 @@ import {AuthService} from "./auth.service";
 import {AuthGuard} from "@nestjs/passport";
 import {ApiExcludeEndpoint, ApiOperation, ApiTags} from "@nestjs/swagger";
 import {Request, Response} from "express";
-import { ApiGuard } from "src/guards/api.guard";
+import {ApiGuard} from "src/guards/api.guard";
 
 @ApiTags(`Auth`)
 @Controller(`auth`)
@@ -30,6 +30,8 @@ export class AuthController {
 		@Res() response: Response,
 		@Session() session: Record<string, any>
 	) {
+		let domain = process.env.NODE_ENV !== `production` ? `online` : `com`;
+
 		const state = await this.authService.loginGoogle({
 			// @ts-ignore
 			googleId: request.user.googleId,
@@ -41,11 +43,12 @@ export class AuthController {
 		response.setHeader(`authorization`, `Bearer ${state.refresh}`);
 		response.cookie(`access`, state.access, {
 			httpOnly: true,
-			domain: `jourloy.com`,
+			domain: `twyxify.${domain}`,
 			maxAge: 1000 * 60 * 60 * 24,
 		});
 		session.user = state.user;
-		response.redirect(`https://dev.jourloy.com/login/check?success=true`);
+
+		response.redirect(`https://tracker.twyxify.${domain}/login/check?success=true`);
 	}
 
 	@Get(`/google`)

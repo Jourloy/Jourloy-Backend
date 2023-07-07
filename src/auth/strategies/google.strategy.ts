@@ -1,8 +1,9 @@
 import {PassportStrategy} from "@nestjs/passport";
 import {Strategy, VerifyCallback} from "passport-google-oauth20";
 import {Injectable} from "@nestjs/common";
-import * as process from "process";
 import {IGoogleAuthProfile} from "../../../types";
+
+let domain = process.env.NODE_ENV !== `production` ? `online` : `com`;
 
 @Injectable()
 export class GoogleStrategy extends PassportStrategy(Strategy, `google`) {
@@ -10,7 +11,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, `google`) {
 		super({
 			clientID: process.env.GOOGLE_CLIENT_ID,
 			clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-			callbackURL: `https://dev-api.jourloy.com/auth/google/callback`,
+			callbackURL: `https://api-tracker.twyxify.${domain}/auth/google/callback`,
 			scope: [`profile`, `email`],
 		});
 	}
