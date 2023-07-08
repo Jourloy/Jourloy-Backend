@@ -14,7 +14,7 @@ require(`dotenv`).config();
 async function bootstrap() {
 	const app = await NestFactory.create(AppModule);
 
-	// Some thins
+	// Some things
 
 	app.use(cookieParser());
 
@@ -33,7 +33,7 @@ async function bootstrap() {
 	// Defence
 
 	app.enableCors({
-		origin: [`https://${process.env.DOMAIN}`, `https://dev.${process.env.DOMAIN}`],
+		origin: [`.twyxify.${process.env.DOMAIN_NAME}`],
 		credentials: true,
 	});
 	app.use(helmet());
@@ -53,7 +53,8 @@ async function bootstrap() {
 			saveUninitialized: false,
 			cookie: {
 				maxAge: 1000 * 60,
-				domain: process.env.DOMAIN,
+				domain: `.twyxify.${process.env.DOMAIN_NAME}`,
+				secure: true,
 			},
 		})
 	);

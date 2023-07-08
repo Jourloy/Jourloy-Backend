@@ -7,7 +7,7 @@ import {JwtGuard} from "src/guards/jwt.guard";
 import {RoleGuard} from "src/guards/role.guard";
 import {Roles} from "src/decorators/roles.decorator";
 import {Role} from "src/enums/role.enum";
-import { ApiTags } from "@nestjs/swagger";
+import {ApiTags} from "@nestjs/swagger";
 
 @Controller(`tracker`)
 @ApiTags(`Tracker`)
@@ -48,6 +48,8 @@ export class TrackerController {
 		const state = await this.trackerService.getOwned(user.id, user.type);
 		if (state === `USER_NOT_FOUND`) {
 			response.status(400).send(`USER_NOT_FOUND`);
+		} else if (!state) {
+			response.status(400).send(`TRACKER_NOT_FOUND`);
 		} else {
 			response.status(200).json(state);
 		}

@@ -7,28 +7,36 @@ export class AuthMiddleware implements NestMiddleware {
 	private logger = new Logger(AuthMiddleware.name);
 
 	use(req: Request, res: Response, next: () => void) {
-		let token = null;
-		const headers = req.headers;
+		const cookies = req.cookies;
+
+		let accessToken = null;
 		const l = {
 			id: ``,
 			type: ``,
 			access: ``,
+			refresh: ``,
 		};
 
-		if (headers && headers[`authorization`]) {
-			if (
-				headers[`authorization`].split(` `)[0] === `Bearer` &&
-				headers[`authorization`].split(` `)[1] != null
-			) {
-				token = headers[`authorization`].split(` `)[1];
+		if (cookies && cookies[`authorization`]) {
+			if (cookies[`authorization`]) {
+				accessToken = cookies[`authorization`];
 			}
 		}
 
-		if (token) {
+		if (cookies && cookies[`authorization_refresh`]) {
+			if (cookies[`authorization_refresh`]) {
+				l.refresh = cookies[`authorization_refresh`];
+			}
+		}
+
+		this.logger.debug(`Middleware cookies`);
+		console.log(cookies);
+
+		if (accessToken) {
 			try {
-				const decode = jwt.verify(token, process.env.SECRET);
+				const decode = jwt.verify(accessToken, process.env.SECRET);
 				l.id = decode[`id`];
-				l.access = token;
+				l.access = accessToken;
 				l.type = decode[`type`];
 				res.locals = l;
 				next();
