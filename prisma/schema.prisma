@@ -1,0 +1,56 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                Int      @id @default(autoincrement())
+  username          String
+  lowercaseUsername String
+  avatar            String
+  refreshTokens     String[]
+  role              String
+  password          String?
+  googleId          String?
+  apiKey            String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  tracker           Tracker? @relation("owned")
+  sharedTracker     Tracker? @relation("shared")
+}
+
+model Tracker {
+  id               Int      @id @default(autoincrement())
+  name             String
+  limit            Int
+  startLimit       Int
+  dayLimit         Int
+  months           Int
+  calc             String
+  owner            User     @relation("owned", fields: [ownerId], references: [id])
+  ownerId          Int      @unique
+  sharedWithUser   User?    @relation("shared", fields: [sharedWithUserId], references: [id])
+  sharedWithUserId Int?     @unique
+  spends           Spend[]
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
+
+model Spend {
+  id          Int       @id @default(autoincrement())
+  cost        Int
+  category    String
+  description String?
+  date        DateTime?
+  tracker     Tracker   @relation(fields: [trackerId], references: [id])
+  trackerId   Int
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
