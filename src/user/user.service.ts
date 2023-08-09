@@ -91,8 +91,10 @@ export class UserService {
 		const user = await this.get({id: id});
 		if (!user) return ERR.USER_NOT_FOUND;
 
-		if (user.refreshTokens.length >= 10) user.refreshTokens.shift();
-		user.refreshTokens.push(token);
+		if (user.refreshTokens) {
+			if (user.refreshTokens.length >= 10) user.refreshTokens.shift();
+			user.refreshTokens.push(token);
+		} else user.refreshTokens = [token];
 
 		return await this.updateUser({id: user.id}, user);
 	}

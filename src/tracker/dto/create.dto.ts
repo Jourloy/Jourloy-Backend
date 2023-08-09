@@ -1,5 +1,5 @@
 import {ApiProperty} from "@nestjs/swagger";
-import {IsNotEmpty, IsNumber} from "class-validator";
+import {IsNotEmpty, IsNumber, IsString} from "class-validator";
 
 export class TrackerCreateDTO {
 	@ApiProperty({example: 31000})
@@ -19,6 +19,6 @@ export class TrackerCreateDTO {
 
 	@ApiProperty({example: `dayCalc`})
 	@IsNotEmpty()
-	@IsNumber()
+	@IsString()
 	calc: string;
 }
