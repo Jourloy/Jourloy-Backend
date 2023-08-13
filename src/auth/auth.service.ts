@@ -58,6 +58,7 @@ export class AuthService {
 
 		const [newRefresh, newAccess] = this.generateTokens(props.googleId, `google`);
 		const updatedUser = await this.userService.updateTokens(user.id, newRefresh);
+		if (updatedUser === ERR.DATABASE || updatedUser === ERR.USER_NOT_FOUND) return updatedUser;
 
 		delete user.password;
 		delete user.refreshTokens;

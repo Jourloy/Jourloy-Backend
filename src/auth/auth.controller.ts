@@ -44,6 +44,7 @@ export class AuthController {
 
 		if (state === ERR.DATABASE) throw new HttpException(ERR.DATABASE, 500);
 		if (state === ERR.USER_EXIST) throw new HttpException(ERR.USER_EXIST, 400);
+		if (state === ERR.USER_NOT_FOUND) throw new HttpException(ERR.USER_NOT_FOUND, 404);
 
 		response.cookie(`authorization_refresh`, `${state.refresh}`, {
 			httpOnly: true,
@@ -60,7 +61,7 @@ export class AuthController {
 		session.user = state.user;
 
 		response.redirect(
-			`https://tracker.twyxify.${process.env.DOMAIN_NAME}/login/check?success=true`
+			`https://tracker.twyxify.${process.env.DOMAIN_NAME}/login/check?success=true&username=${state.user.username}&avatar=${state.user.avatar}`
 		);
 	}
 
