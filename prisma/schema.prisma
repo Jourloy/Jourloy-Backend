@@ -11,7 +11,7 @@ datasource db {
 }
 
 model User {
-  id                Int      @id @default(autoincrement())
+  id                Int          @id @default(autoincrement())
   username          String
   lowercaseUsername String
   avatar            String
@@ -20,37 +20,37 @@ model User {
   password          String?
   googleId          String?
   apiKey            String?
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
-  tracker           Tracker? @relation("owned")
-  sharedTracker     Tracker? @relation("shared")
+  calculator        Calculator[]
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
 }
 
-model Tracker {
-  id               Int      @id @default(autoincrement())
-  name             String
-  limit            Int
-  startLimit       Int
-  dayLimit         Int
-  months           Int
-  calc             String
-  owner            User     @relation("owned", fields: [ownerId], references: [id])
-  ownerId          Int      @unique
-  sharedWithUser   User?    @relation("shared", fields: [sharedWithUserId], references: [id])
-  sharedWithUserId Int?     @unique
-  spends           Spend[]
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
+model Calculator {
+  id        Int        @id @default(autoincrement())
+  name      String
+  positions Position[]
+  members   Member[]
+  owner     User       @relation(fields: [ownerId], references: [id])
+  ownerId   Int
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
 }
 
-model Spend {
-  id          Int       @id @default(autoincrement())
-  cost        Int
-  category    String
-  description String?
-  date        DateTime?
-  tracker     Tracker   @relation(fields: [trackerId], references: [id])
-  trackerId   Int
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+model Member {
+  id           Int        @id @default(autoincrement())
+  name         String
+  avatar       String
+  calculator   Calculator @relation(fields: [calculatorId], references: [id])
+  calculatorId Int
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+}
+
+model Position {
+  id           Int        @id @default(autoincrement())
+  name         String
+  cost         Int
+  memberIds    Int[]
+  calculator   Calculator @relation(fields: [calculatorId], references: [id])
+  calculatorId Int
 }

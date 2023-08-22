@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import {
 	Controller,
 	Get,
@@ -48,20 +49,20 @@ export class AuthController {
 
 		response.cookie(`authorization_refresh`, `${state.refresh}`, {
 			httpOnly: true,
-			domain: `.twyxify.${process.env.DOMAIN_NAME}`,
+			domain: `.jourloy.${process.env.DOMAIN_NAME}`,
 			secure: true,
 			maxAge: 1000 * 60 * 60 * 24,
 		});
 		response.cookie(`authorization`, `${state.access}`, {
 			httpOnly: true,
-			domain: `.twyxify.${process.env.DOMAIN_NAME}`,
+			domain: `.jourloy.${process.env.DOMAIN_NAME}`,
 			secure: true,
 			maxAge: 1000 * 60 * 60 * 24,
 		});
 		session.user = state.user;
 
 		response.redirect(
-			`https://tracker.twyxify.${process.env.DOMAIN_NAME}/login/check?success=true&username=${state.user.username}&avatar=${state.user.avatar}`
+			`https://jourloy.${process.env.DOMAIN_NAME}/login/check?success=true&username=${state.user.username}&avatar=${state.user.avatar}`
 		);
 	}
 
@@ -83,12 +84,12 @@ export class AuthController {
 
 		response.cookie(`authorization_refresh`, `${state.refresh}`, {
 			httpOnly: true,
-			domain: `.twyxify.${process.env.DOMAIN_NAME}`,
+			domain: `.jourloy.${process.env.DOMAIN_NAME}`,
 			maxAge: 1000 * 60 * 60 * 24,
 		});
 		response.cookie(`authorization`, `${state.access}`, {
 			httpOnly: true,
-			domain: `.twyxify.${process.env.DOMAIN_NAME}`,
+			domain: `.jourloy.${process.env.DOMAIN_NAME}`,
 			maxAge: 1000 * 60 * 60 * 24,
 		});
 		response.status(200).send(`OK`);
@@ -104,14 +105,14 @@ export class AuthController {
 
 		response.cookie(`authorization_refresh`, `${state.refresh}`, {
 			httpOnly: true,
-			domain: `.twyxify.${process.env.DOMAIN_NAME}`,
+			domain: `.jourloy.${process.env.DOMAIN_NAME}`,
 			maxAge: 1000 * 60 * 60 * 24,
 		});
 		response.cookie(`authorization`, `${state.access}`, {
 			httpOnly: true,
-			domain: `.twyxify.${process.env.DOMAIN_NAME}`,
+			domain: `.jourloy.${process.env.DOMAIN_NAME}`,
 			maxAge: 1000 * 60 * 60 * 24,
 		});
-		response.status(200).send(`OK`);
+		response.status(200).json(state);
 	}
 }

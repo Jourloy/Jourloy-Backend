@@ -33,7 +33,7 @@ async function bootstrap() {
 	// Defence
 
 	app.enableCors({
-		origin: [`https://twyxify.${process.env.DOMAIN_NAME}`, `https://tracker.twyxify.${process.env.DOMAIN_NAME}`],
+		origin: [`https://jourloy.${process.env.DOMAIN_NAME}`],
 		credentials: true,
 	});
 	app.use(helmet());
@@ -53,13 +53,13 @@ async function bootstrap() {
 			saveUninitialized: false,
 			cookie: {
 				maxAge: 1000 * 60,
-				domain: `.twyxify.${process.env.DOMAIN_NAME}`,
+				domain: `.jourloy.${process.env.DOMAIN_NAME}`,
 				secure: true,
 			},
 		})
 	);
 
-	await app.listen(19001, `0.0.0.0`);
+	await app.listen(10001, `0.0.0.0`);
 }
 
 bootstrap().then();

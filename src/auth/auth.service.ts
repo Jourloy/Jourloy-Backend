@@ -36,8 +36,6 @@ export class AuthService {
 		const user = await this.userService.get({...props});
 		if (!user) return ERR.USER_NOT_FOUND;
 
-		if (!user.refreshTokens.includes(refresh)) return ERR.REFRESH_TOKEN_NOT_VALID;
-
 		const [newRefresh, newAccess] = this.generateTokens(
 			decoded[`id`],
 			decoded[`type`]

@@ -6,14 +6,13 @@ import {UserModule} from "./user/user.module";
 import {ThrottlerModule} from "@nestjs/throttler";
 import {MongooseModule} from "@nestjs/mongoose";
 import {ConfigModule, ConfigService} from "@nestjs/config";
-import {SpendModule} from "./spend/spend.module";
-import {TrackerModule} from "./tracker/tracker.module";
 import {AuthMiddleware} from "./middlewares/auth.middleware";
+import {PartyModule} from "./party/party.module";
 
 @Module({
 	imports: [
 		ThrottlerModule.forRoot({
-			ttl: 60,
+			ttl: 10,
 			limit: 50,
 		}),
 		MongooseModule.forRootAsync({
@@ -21,15 +20,16 @@ import {AuthMiddleware} from "./middlewares/auth.middleware";
 			useFactory: async (configService: ConfigService) => ({
 				uri: `mongodb://${configService.get<string>(
 					`MONGO_HOST`
-				)}/${configService.get<string>(`MONGO_DATABASE`)}${process.env.NODE_ENV !== `production` ? `-dev` : ``}`,
+				)}/${configService.get<string>(`MONGO_DATABASE`)}${
+					process.env.NODE_ENV !== `production` ? `-dev` : ``
+				}`,
 			}),
 			inject: [ConfigService],
 		}),
 
 		AuthModule,
 		UserModule,
-		SpendModule,
-		TrackerModule,
+		PartyModule,
 	],
 	controllers: [AppController],
 	providers: [AppService],
