@@ -120,4 +120,34 @@ export class PartyController {
 		
 		response.status(200).json(position);
 	}
+
+	@Delete(`/position/:id`)
+	@UseGuards(JwtGuard)
+	async removePosition(
+		@Param(`id`) id: string,
+		@CurrentUser() user: ICurrentUser,
+		@Res() response: Response,
+	) {
+		const state = await this.partyService.removePosition(+id, user);
+
+		if (state === ERR.USER_NOT_FOUND) throw new HttpException(ERR.USER_NOT_FOUND, 404);
+		if (state === ERR.CALC_NOT_FOUND) throw new HttpException(ERR.CALC_NOT_FOUND, 404);
+
+		response.status(200).send(`OK`);
+	}
+
+	@Delete(`/position/all/:id`)
+	@UseGuards(JwtGuard)
+	async removePositions(
+		@Param(`id`) id: string,
+		@CurrentUser() user: ICurrentUser,
+		@Res() response: Response,
+	) {
+		const state = await this.partyService.removePositions(+id, user);
+
+		if (state === ERR.USER_NOT_FOUND) throw new HttpException(ERR.USER_NOT_FOUND, 404);
+		if (state === ERR.CALC_NOT_FOUND) throw new HttpException(ERR.CALC_NOT_FOUND, 404);
+
+		response.status(200).send(`OK`);
+	}
 }

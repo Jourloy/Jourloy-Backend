@@ -209,4 +209,46 @@ export class PartyService {
 		if (!created) return ERR.DATABASE;
 		return created;
 	}
+
+	async removePosition(positionId: number, userData: ICurrentUser) {
+		const position = await this._getPosition({id: positionId});
+
+		const props: {googleId?: string; id?: number} = {};
+		if (userData.type === `google`) props.googleId = userData.id;
+		if (userData.type === `local`) props.id = userData.id;
+
+		const user = await this.userService.get(props);
+		if (!user) return ERR.USER_NOT_FOUND;
+
+		const calculator = await this._getCalculator({
+			ownerId: user.id,
+			id: position.calculatorId,
+		});
+		if (!calculator) return ERR.CALC_NOT_FOUND;
+
+		await this.prisma.position.delete({where: {id: position.id}});
+
+		return `OK`;
+	}
+
+	async removePositions(calculatorId: number, userData: ICurrentUser) {
+		const props: {googleId?: string; id?: number} = {};
+		if (userData.type === `google`) props.googleId = userData.id;
+		if (userData.type === `local`) props.id = userData.id;
+
+		const user = await this.userService.get(props);
+		if (!user) return ERR.USER_NOT_FOUND;
+
+		const calculator = await this._getCalculator({
+			ownerId: user.id,
+			id: calculatorId,
+		});
+		if (!calculator) return ERR.CALC_NOT_FOUND;
+
+		for (const position of calculator.positions) {
+			await this.prisma.position.delete({where: {id: position.id}});
+		}
+
+		return `OK`;
+	}
 }
