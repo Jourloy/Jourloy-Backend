@@ -152,6 +152,14 @@ export class PartyService {
 
 		await this.prisma.member.delete({where: member});
 
+		const positions = await this.prisma.position.findMany({where: {memberIds: {has: member.id}}});
+		for (const position of positions) {
+			const newArr: number[] = [];
+			for (const id of position.memberIds) if (id !== member.id) newArr.push(id);
+			position.memberIds = newArr;
+			await this.prisma.position.update({where: {id: position.id}, data: position});
+		}
+
 		return `OK`;
 	}
 
@@ -171,6 +179,12 @@ export class PartyService {
 
 		for (const member of calculator.members) {
 			await this.prisma.member.delete({where: member});
+		}
+		
+		const positions = await this.prisma.position.findMany();
+		for (const position of positions) {
+			position.memberIds = [];
+			await this.prisma.position.update({where: {id: position.id}, data: position});
 		}
 
 		return `OK`;
