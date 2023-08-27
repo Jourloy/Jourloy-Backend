@@ -115,4 +115,21 @@ export class AuthController {
 		});
 		response.status(200).json(state);
 	}
+
+	@Get(`/logout`)
+	@ApiOperation({summary: `Logout user`})
+	@UseGuards(JwtGuard)
+	async logout(@CurrentUser() user: ICurrentUser, @Res() response: Response) {
+		response.cookie(`authorization_refresh`, `none`, {
+			httpOnly: true,
+			domain: `.jourloy.${process.env.DOMAIN_NAME}`,
+			maxAge: 1000,
+		});
+		response.cookie(`authorization`, `none`, {
+			httpOnly: true,
+			domain: `.jourloy.${process.env.DOMAIN_NAME}`,
+			maxAge: 1000,
+		});
+		response.status(200).json(`OK`);
+	}
 }
