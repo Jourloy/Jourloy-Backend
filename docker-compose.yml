@@ -2,7 +2,7 @@ version: '3.7'
 
 services:
     app:
-        container_name: Twyxify-Tracker-Backend
+        container_name: Jourloy-Backend
         build:
             context: .
         volumes:
@@ -12,12 +12,7 @@ services:
         env_file:
             - .env
         ports:
-            - "6000:5000"
-        restart: always
-
-    mongo:
-        container_name: Twyxify-Tracker-Mongo
-        image: mongo:latest
+            - "10001:10001"
         restart: always
 
 volumes:
