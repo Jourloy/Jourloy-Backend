@@ -20,3 +20,21 @@ export class CreatePositionDTO {
 	@ApiProperty({example: [1, 2, 3]})
 	memberIds?: number[];
 }
+
+export class UpdatePositionDTO {
+	@ApiProperty({example: 1})
+	@IsNotEmpty()
+	@IsInt()
+	positionId: number;
+
+	@ApiProperty({example: `Ананас`})
+	@IsString()
+	name?: string;
+
+	@ApiProperty({example: 100})
+	@IsInt()
+	cost?: number;
+
+	@ApiProperty({example: [1, 2, 3]})
+	memberIds?: number[];
+}

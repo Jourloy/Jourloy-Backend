@@ -1,11 +1,22 @@
-import {Body, Controller, Delete, Get, HttpException, Param, Post, Res, UseGuards} from "@nestjs/common";
+import {
+	Body,
+	Controller,
+	Delete,
+	Get,
+	HttpException,
+	Param,
+	Patch,
+	Post,
+	Res,
+	UseGuards,
+} from "@nestjs/common";
 import {PartyService} from "./party.service";
 import {CreateMemberDTO} from "./dto/member.dto";
 import {CurrentUser, ICurrentUser} from "src/decorators/user.decorator";
 import {Response} from "express";
 import {ERR} from "src/enums/error.enum";
 import {JwtGuard} from "src/guards/jwt.guard";
-import { CreatePositionDTO } from "./dto/position.dto";
+import {CreatePositionDTO, UpdatePositionDTO} from "./dto/position.dto";
 
 @Controller(`/party`)
 export class PartyController {
@@ -80,7 +91,7 @@ export class PartyController {
 	async removeMember(
 		@Param(`id`) id: string,
 		@CurrentUser() user: ICurrentUser,
-		@Res() response: Response,
+		@Res() response: Response
 	) {
 		const state = await this.partyService.removeMember(+id, user);
 
@@ -95,7 +106,7 @@ export class PartyController {
 	async removeMembers(
 		@Param(`id`) id: string,
 		@CurrentUser() user: ICurrentUser,
-		@Res() response: Response,
+		@Res() response: Response
 	) {
 		const state = await this.partyService.removeMembers(+id, user);
 
@@ -110,14 +121,29 @@ export class PartyController {
 	async createPosition(
 		@Body() body: CreatePositionDTO,
 		@CurrentUser() user: ICurrentUser,
-		@Res() response: Response,
+		@Res() response: Response
 	) {
 		const position = await this.partyService.createPosition(body, user);
 
 		if (position === ERR.DATABASE) throw new HttpException(ERR.DATABASE, 500);
 		if (position === ERR.USER_NOT_FOUND) throw new HttpException(ERR.USER_NOT_FOUND, 404);
 		if (position === ERR.CALC_NOT_FOUND) throw new HttpException(ERR.CALC_NOT_FOUND, 404);
-		
+
+		response.status(200).json(position);
+	}
+
+	@Patch(`/position`)
+	@UseGuards(JwtGuard)
+	async updatePosition(
+		@Body() body: UpdatePositionDTO,
+		@CurrentUser() user: ICurrentUser,
+		@Res() response: Response
+	) {
+		const position = await this.partyService.updatePosition(body, user);
+
+		if (position === ERR.DATABASE) throw new HttpException(ERR.DATABASE, 500);
+		if (position === ERR.USER_NOT_FOUND) throw new HttpException(ERR.USER_NOT_FOUND, 404);
+
 		response.status(200).json(position);
 	}
 
@@ -126,7 +152,7 @@ export class PartyController {
 	async removePosition(
 		@Param(`id`) id: string,
 		@CurrentUser() user: ICurrentUser,
-		@Res() response: Response,
+		@Res() response: Response
 	) {
 		const state = await this.partyService.removePosition(+id, user);
 
@@ -141,7 +167,7 @@ export class PartyController {
 	async removePositions(
 		@Param(`id`) id: string,
 		@CurrentUser() user: ICurrentUser,
-		@Res() response: Response,
+		@Res() response: Response
 	) {
 		const state = await this.partyService.removePositions(+id, user);
 

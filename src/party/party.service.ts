@@ -4,6 +4,7 @@ import {PrismaService} from "src/database/prisma.service";
 import {ICurrentUser} from "src/decorators/user.decorator";
 import {ERR} from "src/enums/error.enum";
 import {UserService} from "src/user/user.service";
+import { UpdatePositionDTO } from "./dto/position.dto";
 
 @Injectable()
 export class PartyService {
@@ -42,12 +43,25 @@ export class PartyService {
 		return updated;
 	}
 
-	async createCalculator(userData: ICurrentUser) {
+	private async _updatePosition(
+		where: Prisma.PositionWhereUniqueInput,
+		data: Prisma.PositionUpdateInput
+	) {
+		const updated = await this.prisma.position.update({where, data});
+		if (!updated) return ERR.DATABASE;
+		return updated;
+	}
+
+	private getUser(userData: ICurrentUser) {
 		const props: {googleId?: string; id?: number} = {};
 		if (userData.type === `google`) props.googleId = userData.id;
 		if (userData.type === `local`) props.id = userData.id;
 
-		const user = await this.userService.get(props);
+		return this.userService.get(props);
+	}
+
+	async createCalculator(userData: ICurrentUser) {
+		const user = await this.getUser(userData);
 		if (!user) return ERR.USER_NOT_FOUND;
 
 		const calculator = await this._getCalculator({ownerId: user.id});
@@ -65,11 +79,7 @@ export class PartyService {
 	}
 
 	async getCalculator(userData: ICurrentUser) {
-		const props: {googleId?: string; id?: number} = {};
-		if (userData.type === `google`) props.googleId = userData.id;
-		if (userData.type === `local`) props.id = userData.id;
-
-		const user = await this.userService.get(props);
+		const user = await this.getUser(userData);
 		if (!user) return ERR.USER_NOT_FOUND;
 
 		const calculator = await this._getCalculator({ownerId: user.id});
@@ -88,11 +98,7 @@ export class PartyService {
 		data: {name: string; calculatorId: number},
 		userData: ICurrentUser
 	) {
-		const props: {googleId?: string; id?: number} = {};
-		if (userData.type === `google`) props.googleId = userData.id;
-		if (userData.type === `local`) props.id = userData.id;
-
-		const user = await this.userService.get(props);
+		const user = await this.getUser(userData);
 		if (!user) return ERR.USER_NOT_FOUND;
 
 		const calculator = await this._getCalculator({
@@ -114,11 +120,7 @@ export class PartyService {
 	}
 
 	async getMembers(calculatorId: number, userData: ICurrentUser) {
-		const props: {googleId?: string; id?: number} = {};
-		if (userData.type === `google`) props.googleId = userData.id;
-		if (userData.type === `local`) props.id = userData.id;
-
-		const user = await this.userService.get(props);
+		const user = await this.getUser(userData);
 		if (!user) return ERR.USER_NOT_FOUND;
 
 		const calculator = await this._getCalculator({
@@ -137,11 +139,7 @@ export class PartyService {
 	async removeMember(memberId: number, userData: ICurrentUser) {
 		const member = await this._getMember({id: memberId});
 
-		const props: {googleId?: string; id?: number} = {};
-		if (userData.type === `google`) props.googleId = userData.id;
-		if (userData.type === `local`) props.id = userData.id;
-
-		const user = await this.userService.get(props);
+		const user = await this.getUser(userData);
 		if (!user) return ERR.USER_NOT_FOUND;
 
 		const calculator = await this._getCalculator({
@@ -164,11 +162,7 @@ export class PartyService {
 	}
 
 	async removeMembers(calculatorId: number, userData: ICurrentUser) {
-		const props: {googleId?: string; id?: number} = {};
-		if (userData.type === `google`) props.googleId = userData.id;
-		if (userData.type === `local`) props.id = userData.id;
-
-		const user = await this.userService.get(props);
+		const user = await this.getUser(userData);
 		if (!user) return ERR.USER_NOT_FOUND;
 
 		const calculator = await this._getCalculator({
@@ -191,11 +185,7 @@ export class PartyService {
 	}
 
 	async createPosition(data: {calculatorId: number, name: string, cost: number, memberIds?: number[]}, userData: ICurrentUser) {
-		const props: {googleId?: string; id?: number} = {};
-		if (userData.type === `google`) props.googleId = userData.id;
-		if (userData.type === `local`) props.id = userData.id;
-
-		const user = await this.userService.get(props);
+		const user = await this.getUser(userData);
 		if (!user) return ERR.USER_NOT_FOUND;
 
 		const calculator = await this._getCalculator({
@@ -210,14 +200,22 @@ export class PartyService {
 		return created;
 	}
 
+	async updatePosition(data: UpdatePositionDTO, userData: ICurrentUser) {
+		const user = await this.getUser(userData);
+		if (!user) return ERR.USER_NOT_FOUND;
+		const position = await this._getPosition({id: data.positionId});
+
+		if (data.cost) position.cost = data.cost;
+		if (data.name) position.name = data.name;
+		if (data.memberIds) position.memberIds = data.memberIds;
+
+		return this._updatePosition({id: position.id}, position);
+	}
+
 	async removePosition(positionId: number, userData: ICurrentUser) {
 		const position = await this._getPosition({id: positionId});
 
-		const props: {googleId?: string; id?: number} = {};
-		if (userData.type === `google`) props.googleId = userData.id;
-		if (userData.type === `local`) props.id = userData.id;
-
-		const user = await this.userService.get(props);
+		const user = await this.getUser(userData);
 		if (!user) return ERR.USER_NOT_FOUND;
 
 		const calculator = await this._getCalculator({
@@ -232,11 +230,7 @@ export class PartyService {
 	}
 
 	async removePositions(calculatorId: number, userData: ICurrentUser) {
-		const props: {googleId?: string; id?: number} = {};
-		if (userData.type === `google`) props.googleId = userData.id;
-		if (userData.type === `local`) props.id = userData.id;
-
-		const user = await this.userService.get(props);
+		const user = await this.getUser(userData);
 		if (!user) return ERR.USER_NOT_FOUND;
 
 		const calculator = await this._getCalculator({
