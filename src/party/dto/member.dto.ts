@@ -13,7 +13,7 @@ export class CreateMemberDTO {
 	name: string;
 
 	@ApiProperty({example: true})
-	payer?: boolean;
+	payer: boolean;
 }
 
 export class UpdateMemberDTO {

@@ -41,7 +41,7 @@ model Member {
   name         String
   calculator   Calculator @relation(fields: [calculatorId], references: [id])
   calculatorId Int
-  payer        Boolean?
+  payer        Boolean    @default(false)
   createdAt    DateTime   @default(now())
   updatedAt    DateTime   @updatedAt
 }
