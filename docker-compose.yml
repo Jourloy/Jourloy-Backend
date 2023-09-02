@@ -8,7 +8,7 @@ services:
         volumes:
             - .:/app
             - /app/node_modules
-        command: yarn prisma:generate dev && yarn dev
+        command: yarn dev
         env_file:
             - .env
         ports:
