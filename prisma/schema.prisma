@@ -42,6 +42,7 @@ model Member {
   avatar       String
   calculator   Calculator @relation(fields: [calculatorId], references: [id])
   calculatorId Int
+  payer        Boolean?
   createdAt    DateTime   @default(now())
   updatedAt    DateTime   @updatedAt
 }
@@ -51,6 +52,7 @@ model Position {
   name         String
   cost         Int
   memberIds    Int[]
+  payerId      Int?
   calculator   Calculator @relation(fields: [calculatorId], references: [id])
   calculatorId Int
 }

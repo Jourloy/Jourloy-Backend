@@ -19,6 +19,9 @@ export class CreatePositionDTO {
 
 	@ApiProperty({example: [1, 2, 3]})
 	memberIds?: number[];
+
+	@ApiProperty({example: 1})
+	payerId?: number;
 }
 
 export class UpdatePositionDTO {
@@ -37,4 +40,7 @@ export class UpdatePositionDTO {
 
 	@ApiProperty({example: [1, 2, 3]})
 	memberIds?: number[];
+
+	@ApiProperty({example: 1})
+	payerId?: number;
 }

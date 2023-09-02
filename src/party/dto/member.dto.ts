@@ -11,6 +11,9 @@ export class CreateMemberDTO {
 	@IsNotEmpty()
 	@IsString()
 	name: string;
+
+	@ApiProperty({example: true})
+	payer?: boolean;
 }
 
 export class UpdateMemberDTO {

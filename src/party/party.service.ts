@@ -4,7 +4,8 @@ import {PrismaService} from "src/database/prisma.service";
 import {ICurrentUser} from "src/decorators/user.decorator";
 import {ERR} from "src/enums/error.enum";
 import {UserService} from "src/user/user.service";
-import { UpdatePositionDTO } from "./dto/position.dto";
+import { CreatePositionDTO, UpdatePositionDTO } from "./dto/position.dto";
+import { CreateMemberDTO } from "./dto/member.dto";
 
 @Injectable()
 export class PartyService {
@@ -95,7 +96,7 @@ export class PartyService {
 	// async getOwnedCalculators() {}
 
 	async createMember(
-		data: {name: string; calculatorId: number},
+		data: CreateMemberDTO,
 		userData: ICurrentUser
 	) {
 		const user = await this.getUser(userData);
@@ -112,6 +113,7 @@ export class PartyService {
 				name: data.name,
 				avatar: `https://avatars.dicebear.com/api/identicon/${data.name}.svg`,
 				calculatorId: data.calculatorId,
+				payer: data.payer
 			},
 		});
 
@@ -184,7 +186,7 @@ export class PartyService {
 		return `OK`;
 	}
 
-	async createPosition(data: {calculatorId: number, name: string, cost: number, memberIds?: number[]}, userData: ICurrentUser) {
+	async createPosition(data: CreatePositionDTO, userData: ICurrentUser) {
 		const user = await this.getUser(userData);
 		if (!user) return ERR.USER_NOT_FOUND;
 
