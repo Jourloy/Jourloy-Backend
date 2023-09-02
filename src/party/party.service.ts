@@ -113,7 +113,7 @@ export class PartyService {
 				name: data.name,
 				avatar: `https://avatars.dicebear.com/api/identicon/${data.name}.svg`,
 				calculatorId: data.calculatorId,
-				payer: data.payer
+				payer: data.payer ? data.payer : false,
 			},
 		});
 
