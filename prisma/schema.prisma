@@ -39,7 +39,6 @@ model Calculator {
 model Member {
   id           Int        @id @default(autoincrement())
   name         String
-  avatar       String
   calculator   Calculator @relation(fields: [calculatorId], references: [id])
   calculatorId Int
   payer        Boolean?

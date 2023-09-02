@@ -108,14 +108,7 @@ export class PartyService {
 		});
 		if (!calculator) return ERR.CALC_NOT_FOUND;
 
-		const created = await this.prisma.member.create({
-			data: {
-				name: data.name,
-				avatar: `https://avatars.dicebear.com/api/identicon/${data.name}.svg`,
-				calculatorId: data.calculatorId,
-				payer: data.payer ? data.payer : false,
-			},
-		});
+		const created = await this.prisma.member.create({data: data});
 
 		if (!created) return ERR.DATABASE;
 		return created;
