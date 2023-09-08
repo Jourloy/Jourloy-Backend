@@ -1,10 +1,11 @@
 import {Body, Controller, Get, HttpException, Post, Res, UseGuards} from "@nestjs/common";
 import {TrackerService} from "./tracker.service";
 import {JwtGuard} from "src/guards/jwt.guard";
-import {TrackerCreateDTO} from "./dto/create.dto";
+import {TrackerCreateDTO} from "./dto/tracker.dto";
 import {CurrentUser, ICurrentUser} from "src/decorators/user.decorator";
 import {Response} from "express";
 import {ERR} from "src/enums/error.enum";
+import {SpendCreateDTO} from "./dto/spend.dto";
 
 @Controller(`tracker`)
 export class TrackerController {
@@ -12,7 +13,7 @@ export class TrackerController {
 
 	@Post(`/`)
 	@UseGuards(JwtGuard)
-	async create(
+	async createTracker(
 		@Body() body: TrackerCreateDTO,
 		@CurrentUser() user: ICurrentUser,
 		@Res() response: Response
@@ -34,5 +35,24 @@ export class TrackerController {
 		if (state === ERR.TRACKER_NOT_FOUND) throw new HttpException(ERR.TRACKER_NOT_FOUND, 404);
 
 		response.status(200).json(state);
+	}
+
+	@Post(`/spend`)
+	@UseGuards(JwtGuard)
+	async createSpend(
+		@Body() body: SpendCreateDTO,
+		@CurrentUser() user: ICurrentUser,
+		@Res() response: Response
+	) {
+		const state = await this.trackerService.createSpend({...body}, user);
+		if (state === ERR.USER_NOT_FOUND) {
+			response.status(404).send(ERR.USER_NOT_FOUND);
+		} else if (state === ERR.TRACKER_NOT_FOUND) {
+			response.status(404).send(ERR.TRACKER_NOT_FOUND);
+		} else if (state === ERR.INCORRECT_DATA) {
+			response.status(400).send(ERR.INCORRECT_DATA);
+		} else {
+			response.status(200).json(state);
+		}
 	}
 }

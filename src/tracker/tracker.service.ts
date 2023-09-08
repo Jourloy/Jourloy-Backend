@@ -1,9 +1,10 @@
 import {Injectable} from "@nestjs/common";
 import {PrismaService} from "src/database/prisma.service";
 import {UserService} from "src/user/user.service";
-import {TrackerCreateDTO} from "./dto/create.dto";
+import {TrackerCreateDTO} from "./dto/tracker.dto";
 import {ICurrentUser} from "src/decorators/user.decorator";
 import {ERR} from "src/enums/error.enum";
+import { SpendCreateDTO } from "./dto/spend.dto";
 
 @Injectable()
 export class TrackerService {
@@ -69,5 +70,26 @@ export class TrackerService {
 
 		if (!tracker) return ERR.TRACKER_NOT_FOUND;
 		return tracker;
+	}
+
+	public async createSpend(data: SpendCreateDTO, user: ICurrentUser) {
+		const tracker = await this.getOwned(user);
+		if (!tracker || tracker === ERR.TRACKER_NOT_FOUND) return ERR.TRACKER_NOT_FOUND;
+		if (tracker === ERR.USER_NOT_FOUND) return tracker;
+
+		if (!data || !data.cost) return ERR.INCORRECT_DATA;
+
+		const created = this.prisma.spend.create({
+			data: {
+				cost: data.cost,
+				category: data.category,
+				description: data.description,
+				date: data.date,
+				trackerId: tracker.id,
+			},
+		});
+
+		if (!created) return ERR.DATABASE;
+		return created;
 	}
 }

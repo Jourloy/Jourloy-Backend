@@ -49,6 +49,7 @@ model Spend {
   category    String
   description String?
   date        DateTime?
+  repeat      String?
   tracker     Tracker   @relation(fields: [trackerId], references: [id])
   trackerId   Int
   createdAt   DateTime  @default(now())
