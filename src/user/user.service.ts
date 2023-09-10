@@ -1,4 +1,4 @@
-import {HttpException, Injectable, Logger} from "@nestjs/common";
+import {Injectable, Logger} from "@nestjs/common";
 import crypto from "crypto";
 import {IGoogleUser, IUser} from "../../types";
 import {PrismaService} from "src/database/prisma.service";

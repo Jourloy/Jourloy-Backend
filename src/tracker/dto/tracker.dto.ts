@@ -22,3 +22,25 @@ export class TrackerCreateDTO {
 	@IsString()
 	calc: string;
 }
+
+export class TrackerUpdateDTO {
+	@ApiProperty({example: 500})
+	@IsNotEmpty()
+	@IsNumber()
+	dayLimit: number;
+
+	@ApiProperty({example: new Date()})
+	@IsNotEmpty()
+	@IsString()
+	startDate: string;
+
+	@ApiProperty({example: `dayCalc`})
+	@IsNotEmpty()
+	@IsString()
+	calc: string;
+
+	@ApiProperty({example: 10000})
+	@IsNotEmpty()
+	@IsNumber()
+	limit: number;
+}

@@ -1,14 +1,16 @@
 import {Injectable} from "@nestjs/common";
 import {PrismaService} from "src/database/prisma.service";
 import {UserService} from "src/user/user.service";
-import {TrackerCreateDTO} from "./dto/tracker.dto";
+import {TrackerCreateDTO, TrackerUpdateDTO} from "./dto/tracker.dto";
 import {ICurrentUser} from "src/decorators/user.decorator";
 import {ERR} from "src/enums/error.enum";
-import { SpendCreateDTO } from "./dto/spend.dto";
+import {SpendCreateDTO} from "./dto/spend.dto";
 
 @Injectable()
 export class TrackerService {
 	constructor(private prisma: PrismaService, private userService: UserService) {}
+
+	/* TRACKER */
 
 	/**
 	 * Creates a tracker based on the given data and user information.
@@ -72,13 +74,115 @@ export class TrackerService {
 		return tracker;
 	}
 
+	/**
+	 * Updates the tracker based on the given data and user information.
+	 *
+	 * @param data - The data for updating the tracker.
+	 * @param userData - The user information.
+	 * @returns The updated tracker if successful, otherwise an error code.
+	 */
+	public async updateTracker(data: TrackerUpdateDTO, userData: ICurrentUser) {
+		// Prepare props object based on the user's type
+		const props: {googleId?: string; id?: number} = {};
+		if (userData.type === `google`) props.googleId = userData.id;
+		if (userData.type === `local`) props.id = userData.id;
+
+		// Retrieve the user
+		const user = await this.userService.get(props);
+		if (!user) return ERR.USER_NOT_FOUND;
+
+		// Retrieve the tracker associated with the user
+		const tracker = await this.prisma.tracker.findFirst({
+			where: {ownerId: user.id},
+			include: {spends: true},
+		});
+
+		// If tracker is not found, return error
+		if (!tracker) return ERR.TRACKER_NOT_FOUND;
+
+		// Update the tracker
+		const updated = await this.prisma.tracker.update({
+			where: {id: tracker.id},
+			data: {
+				dayLimit: data.dayLimit,
+				calc: data.calc,
+				createdAt: new Date(data.startDate),
+				limit: data.limit,
+			},
+			include: {spends: true},
+		});
+
+		// If tracker is not updated, return error
+		if (!updated) return ERR.DATABASE;
+
+		// Return the updated tracker
+		return updated;
+	}
+
+	/**
+	 * Deletes the tracker based on the given user information.
+	 *
+	 * @param id - The tracker's id.
+	 * @param userData - The user information.
+	 * @returns OK if successfuly deleted, otherwise an error code.
+	 */
+	public async removeTracker(id: number, userData: ICurrentUser) {
+		// Prepare props object based on the user's type
+		const props: {googleId?: string; id?: number} = {};
+		if (userData.type === `google`) props.googleId = userData.id;
+		if (userData.type === `local`) props.id = userData.id;
+
+		// Retrieve the user
+		const user = await this.userService.get(props);
+		if (!user) return ERR.USER_NOT_FOUND;
+
+		// Retrieve the tracker associated with the user
+		const tracker = await this.prisma.tracker.findFirst({
+			where: {ownerId: user.id, id: id},
+			include: {spends: true},
+		});
+
+		// If tracker is not found, return error
+		if (!tracker) return ERR.TRACKER_NOT_FOUND;
+
+		// Delete the spends
+		for (const spend of tracker.spends) {
+			await this.prisma.spend.delete({
+				where: {id: spend.id},
+			});
+		}
+
+		// Delete the tracker
+		await this.prisma.tracker.delete({
+			where: {id: tracker.id},
+		});
+
+		return `OK`;
+	}
+
+	/* SPENDS */
+
+	/**
+	 * Create a spend entry.
+	 *
+	 * @param data - The spend data.
+	 * @param user - The current user.
+	 * @returns The created spend entry, or an error.
+	 */
 	public async createSpend(data: SpendCreateDTO, user: ICurrentUser) {
+		// Retrieve the tracker owned by the user
 		const tracker = await this.getOwned(user);
+
+		// If tracker is not found, return error
 		if (!tracker || tracker === ERR.TRACKER_NOT_FOUND) return ERR.TRACKER_NOT_FOUND;
+
+		// If the user is not found, return the error
 		if (tracker === ERR.USER_NOT_FOUND) return tracker;
 
+		// Check if the required data is provided
 		if (!data || !data.cost) return ERR.INCORRECT_DATA;
 
+		// Create the spend entry
 		const created = this.prisma.spend.create({
 			data: {
 				cost: data.cost,
@@ -89,7 +193,10 @@ export class TrackerService {
 			},
 		});
 
+		// If the spend entry is not created, return error
 		if (!created) return ERR.DATABASE;
+
+		// Return the created spend entry
 		return created;
 	}
 }
