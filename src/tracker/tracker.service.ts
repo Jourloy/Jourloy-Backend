@@ -4,7 +4,7 @@ import {UserService} from "src/user/user.service";
 import {TrackerCreateDTO, TrackerUpdateDTO} from "./dto/tracker.dto";
 import {ICurrentUser} from "src/decorators/user.decorator";
 import {ERR} from "src/enums/error.enum";
-import {SpendCreateDTO} from "./dto/spend.dto";
+import {SpendCreateDTO, SpendUpdateDTO} from "./dto/spend.dto";
 
 @Injectable()
 export class TrackerService {
@@ -179,9 +179,6 @@ export class TrackerService {
 		// If the user is not found, return the error
 		if (tracker === ERR.USER_NOT_FOUND) return tracker;
 
-		// Check if the required data is provided
-		if (!data || !data.cost) return ERR.INCORRECT_DATA;
-
 		// Create the spend entry
 		const created = this.prisma.spend.create({
 			data: {
@@ -198,5 +195,67 @@ export class TrackerService {
 
 		// Return the created spend entry
 		return created;
+	}
+
+	/**
+	 * Updates the spend entry.
+	 * 
+	 * @param id - The spend's id.
+	 * @param data - The updated spend data.
+	 * @param user - The current user.
+	 * @returns The updated spend entry, or an error.
+	 */
+	public async updateSpend(id: number, data: SpendUpdateDTO, user: ICurrentUser) {
+		// Retrieve the tracker owned by the user
+		const tracker = await this.getOwned(user);
+
+		// If tracker is not found, return error
+		if (!tracker || tracker === ERR.TRACKER_NOT_FOUND) return ERR.TRACKER_NOT_FOUND;
+
+		// If the user is not found, return the error
+		if (tracker === ERR.USER_NOT_FOUND) return tracker;
+
+		// Update the spend entry
+		const updated = this.prisma.spend.update({
+			where: {id: id},
+			data: {
+				cost: data.cost,
+				category: data.category,
+				description: data.description,
+				date: data.date,
+				createdAt: new Date(data.createdAt)
+			},
+		});
+
+		// If the spend entry is not updated, return error
+		if (!updated) return ERR.DATABASE;
+
+		// Return the updated spend entry
+		return updated;
+	}
+
+	/**
+	 * Deletes the spend based on the given user information.
+	 * 
+	 * @param id - The spend's id.
+	 * @param user - The current user.
+	 * @returns OK if successfuly deleted, otherwise an error code.
+	 */
+	public async removeSpend(id: number, user: ICurrentUser) {
+		// Retrieve the tracker owned by the user
+		const tracker = await this.getOwned(user);
+
+		// If tracker is not found, return error
+		if (!tracker || tracker === ERR.TRACKER_NOT_FOUND) return ERR.TRACKER_NOT_FOUND;
+
+		// If the user is not found, return the error
+		if (tracker === ERR.USER_NOT_FOUND) return tracker;
+
+		// Delete the spend entry
+		await this.prisma.spend.delete({
+			where: {id: id},
+		});
+
+		return `OK`;
 	}
 }

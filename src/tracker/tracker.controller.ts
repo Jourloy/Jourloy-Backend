@@ -1,11 +1,22 @@
-import {Body, Controller, Delete, Get, HttpException, Param, Patch, Post, Res, UseGuards} from "@nestjs/common";
+import {
+	Body,
+	Controller,
+	Delete,
+	Get,
+	HttpException,
+	Param,
+	Patch,
+	Post,
+	Res,
+	UseGuards,
+} from "@nestjs/common";
 import {TrackerService} from "./tracker.service";
 import {JwtGuard} from "src/guards/jwt.guard";
 import {TrackerCreateDTO, TrackerUpdateDTO} from "./dto/tracker.dto";
 import {CurrentUser, ICurrentUser} from "src/decorators/user.decorator";
 import {Response} from "express";
 import {ERR} from "src/enums/error.enum";
-import {SpendCreateDTO} from "./dto/spend.dto";
+import {SpendCreateDTO, SpendUpdateDTO} from "./dto/spend.dto";
 
 @Controller(`tracker`)
 export class TrackerController {
@@ -54,7 +65,11 @@ export class TrackerController {
 
 	@Delete(`/:id`)
 	@UseGuards(JwtGuard)
-	async removeTracker(@Param(`id`) id: string, @CurrentUser() user: ICurrentUser, @Res() response: Response) {
+	async removeTracker(
+		@Param(`id`) id: string,
+		@CurrentUser() user: ICurrentUser,
+		@Res() response: Response
+	) {
 		const state = await this.trackerService.removeTracker(+id, user);
 
 		if (state === ERR.USER_NOT_FOUND) throw new HttpException(ERR.USER_NOT_FOUND, 404);
@@ -71,14 +86,41 @@ export class TrackerController {
 		@Res() response: Response
 	) {
 		const state = await this.trackerService.createSpend({...body}, user);
-		if (state === ERR.USER_NOT_FOUND) {
-			response.status(404).send(ERR.USER_NOT_FOUND);
-		} else if (state === ERR.TRACKER_NOT_FOUND) {
-			response.status(404).send(ERR.TRACKER_NOT_FOUND);
-		} else if (state === ERR.INCORRECT_DATA) {
-			response.status(400).send(ERR.INCORRECT_DATA);
-		} else {
-			response.status(200).json(state);
-		}
+
+		if (state === ERR.USER_NOT_FOUND) throw new HttpException(ERR.USER_NOT_FOUND, 404);
+		if (state === ERR.TRACKER_NOT_FOUND) throw new HttpException(ERR.TRACKER_NOT_FOUND, 404);
+
+		response.status(200).json(state);
+	}
+
+	@Patch(`/spend/:id`)
+	@UseGuards(JwtGuard)
+	async updateSpend(
+		@Param(`id`) id: string,
+		@Body() body: SpendUpdateDTO,
+		@CurrentUser() user: ICurrentUser,
+		@Res() response: Response
+	) {
+		const state = await this.trackerService.updateSpend(+id, {...body}, user);
+
+		if (state === ERR.USER_NOT_FOUND) throw new HttpException(ERR.USER_NOT_FOUND, 404);
+		if (state === ERR.TRACKER_NOT_FOUND) throw new HttpException(ERR.TRACKER_NOT_FOUND, 404);
+
+		response.status(200).json(state);
+	}
+
+	@Delete(`/spend/:id`)
+	@UseGuards(JwtGuard)
+	async removeSpend(
+		@Param(`id`) id: string,
+		@CurrentUser() user: ICurrentUser,
+		@Res() response: Response
+	) {
+		const state = await this.trackerService.removeSpend(+id, user);
+
+		if (state === ERR.USER_NOT_FOUND) throw new HttpException(ERR.USER_NOT_FOUND, 404);
+		if (state === ERR.TRACKER_NOT_FOUND) throw new HttpException(ERR.TRACKER_NOT_FOUND, 404);
+
+		response.status(200).json(state);
 	}
 }
