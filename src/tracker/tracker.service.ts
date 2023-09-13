@@ -106,7 +106,7 @@ export class TrackerService {
 			data: {
 				dayLimit: data.dayLimit,
 				calc: data.calc,
-				createdAt: new Date(data.startDate),
+				startDate: new Date(data.startDate),
 				limit: data.limit,
 			},
 			include: {spends: true},
