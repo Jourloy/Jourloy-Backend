@@ -14,7 +14,7 @@
 
 - [Getting Started](#getting-started)
 - - [Installation](#installation)
-- - - [.env](#evn)
+- - - [.env](#env)
 - - [Test](test)
 - [Running the app](#running-the-app)
 - - [Docker](#docker)
@@ -32,9 +32,13 @@
 $ yarn install
 ```
 
-#### .evn
+#### .env
 
 Don't forget create `.env` from `.env.sample` and add data
+
+##### Deployment mode
+
+If you want start server locally, so you should set `DEPLOYMENT_MODE` to `local`, else to any other value
 
 ### Test
 
@@ -51,7 +55,7 @@ $ yarn test:cov
 
 ### Running the app
 
-#### Docker
+#### Docker (have troubles)
 
 ```bash
 $ docker-compose up -d
@@ -60,12 +64,21 @@ $ docker-compose up -d
 #### Yarn
 ```bash
 # Development
-$ yarn start:dev
+$ yarn dev
 
 # Production
 $ yarn start
 ```
 
+#### PM2
+
+```bash
+# Build
+$ yarn build
+
+# Start
+$ pm2 start dist/src/main.js
+```
 ## Dev
 
 ### Swagger

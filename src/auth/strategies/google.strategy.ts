@@ -6,10 +6,15 @@ import {IGoogleAuthProfile} from "../../../types";
 @Injectable()
 export class GoogleStrategy extends PassportStrategy(Strategy, `google`) {
 	constructor() {
+		const uri =
+			process.env.DEPLOYMENT_MODE === `local`
+				? `http://localhost:${process.env.PORT}`
+				: `https://jourloy.${process.env.DOMAIN_NAME}`;
+
 		super({
 			clientID: process.env.GOOGLE_CLIENT_ID,
 			clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-			callbackURL: `https://api.jourloy.${process.env.DOMAIN_NAME}/auth/google/callback`,
+			callbackURL: `${uri}/auth/google/callback`,
 			scope: [`profile`, `email`],
 		});
 	}
