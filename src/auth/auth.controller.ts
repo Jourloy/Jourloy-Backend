@@ -13,7 +13,7 @@ import {
 import {AuthService} from "./auth.service";
 import {AuthGuard} from "@nestjs/passport";
 import {ApiExcludeEndpoint, ApiOperation, ApiTags} from "@nestjs/swagger";
-import {Request, Response} from "express";
+import {CookieOptions, Request, Response} from "express";
 import {ApiGuard} from "src/guards/api.guard";
 import {JwtGuard} from "../guards/jwt.guard";
 import { CurrentUser, ICurrentUser } from "src/decorators/user.decorator";
@@ -25,6 +25,14 @@ export class AuthController {
 	constructor(private readonly authService: AuthService) {}
 
 	private logger = new Logger(AuthController.name);
+
+	private defaultCookieSettings: CookieOptions = {
+		httpOnly: true,
+		domain: `.jourloy.${process.env.DOMAIN_NAME}`,
+		secure: true,
+		sameSite: `lax`,
+		maxAge: 1000 * 60 * 60 * 24,
+	};
 
 	@Get(`/google/callback`)
 	@UseGuards(AuthGuard(`google`))
@@ -47,18 +55,8 @@ export class AuthController {
 		if (state === ERR.USER_EXIST) throw new HttpException(ERR.USER_EXIST, 400);
 		if (state === ERR.USER_NOT_FOUND) throw new HttpException(ERR.USER_NOT_FOUND, 404);
 
-		response.cookie(`authorization_refresh`, `${state.refresh}`, {
-			httpOnly: true,
-			domain: `.jourloy.${process.env.DOMAIN_NAME}`,
-			secure: true,
-			maxAge: 1000 * 60 * 60 * 24,
-		});
-		response.cookie(`authorization`, `${state.access}`, {
-			httpOnly: true,
-			domain: `.jourloy.${process.env.DOMAIN_NAME}`,
-			secure: true,
-			maxAge: 1000 * 60 * 60 * 24,
-		});
+		response.cookie(`authorization_refresh`, `${state.refresh}`, this.defaultCookieSettings);
+		response.cookie(`authorization`, `${state.access}`, this.defaultCookieSettings);
 		session.user = state.user;
 
 		response.redirect(
@@ -82,16 +80,8 @@ export class AuthController {
 		if (state === ERR.FORBIDDEN) throw new HttpException(ERR.FORBIDDEN, 401);
 		if (state === ERR.USER_NOT_FOUND) throw new HttpException(ERR.USER_NOT_FOUND, 404);
 
-		response.cookie(`authorization_refresh`, `${state.refresh}`, {
-			httpOnly: true,
-			domain: `.jourloy.${process.env.DOMAIN_NAME}`,
-			maxAge: 1000 * 60 * 60 * 24,
-		});
-		response.cookie(`authorization`, `${state.access}`, {
-			httpOnly: true,
-			domain: `.jourloy.${process.env.DOMAIN_NAME}`,
-			maxAge: 1000 * 60 * 60 * 24,
-		});
+		response.cookie(`authorization_refresh`, `${state.refresh}`, this.defaultCookieSettings);
+		response.cookie(`authorization`, `${state.access}`, this.defaultCookieSettings);
 		response.status(200).send(`OK`);
 	}
 
@@ -103,16 +93,8 @@ export class AuthController {
 		if (state === ERR.REFRESH_TOKEN_NOT_VALID) throw new HttpException(ERR.REFRESH_TOKEN_NOT_VALID, 401);
 		if (state === ERR.USER_NOT_FOUND) throw new HttpException(ERR.USER_NOT_FOUND, 401);
 
-		response.cookie(`authorization_refresh`, `${state.refresh}`, {
-			httpOnly: true,
-			domain: `.jourloy.${process.env.DOMAIN_NAME}`,
-			maxAge: 1000 * 60 * 60 * 24,
-		});
-		response.cookie(`authorization`, `${state.access}`, {
-			httpOnly: true,
-			domain: `.jourloy.${process.env.DOMAIN_NAME}`,
-			maxAge: 1000 * 60 * 60 * 24,
-		});
+		response.cookie(`authorization_refresh`, `${state.refresh}`, this.defaultCookieSettings);
+		response.cookie(`authorization`, `${state.access}`, this.defaultCookieSettings);
 		response.status(200).json(state);
 	}
 
@@ -122,11 +104,13 @@ export class AuthController {
 	async logout(@CurrentUser() user: ICurrentUser, @Res() response: Response) {
 		response.cookie(`authorization_refresh`, `none`, {
 			httpOnly: true,
+			secure: true,
 			domain: `.jourloy.${process.env.DOMAIN_NAME}`,
 			maxAge: 1000,
 		});
 		response.cookie(`authorization`, `none`, {
 			httpOnly: true,
+			secure: true,
 			domain: `.jourloy.${process.env.DOMAIN_NAME}`,
 			maxAge: 1000,
 		});

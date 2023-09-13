@@ -15,4 +15,8 @@ export enum ERR {
 	// Other
 	INCORRECT_DATA = `Data is incorrect`,
 	FORBIDDEN = `Forbidden`,
+
+	// Tracker
+	TRACKER_EXIST = `Tracker already exist`,
+	TRACKER_NOT_FOUND = `Tracker not found`,
 }

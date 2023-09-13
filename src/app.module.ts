@@ -8,6 +8,7 @@ import {MongooseModule} from "@nestjs/mongoose";
 import {ConfigModule, ConfigService} from "@nestjs/config";
 import {AuthMiddleware} from "./middlewares/auth.middleware";
 import {PartyModule} from "./party/party.module";
+import { TrackerModule } from './tracker/tracker.module';
 
 @Module({
 	imports: [
@@ -30,6 +31,7 @@ import {PartyModule} from "./party/party.module";
 		AuthModule,
 		UserModule,
 		PartyModule,
+		TrackerModule,
 	],
 	controllers: [AppController],
 	providers: [AppService],

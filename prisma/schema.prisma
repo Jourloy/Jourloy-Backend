@@ -21,9 +21,43 @@ model User {
   googleId          String?
   apiKey            String?
   calculator        Calculator[]
+  tracker           Tracker[]
   createdAt         DateTime     @default(now())
   updatedAt         DateTime     @updatedAt
 }
+
+// TRACKER MODEL //
+
+model Tracker {
+  id         Int      @id @default(autoincrement())
+  name       String
+  limit      Int
+  startLimit Int
+  dayLimit   Int
+  months     Int
+  calc       String
+  owner      User     @relation(fields: [ownerId], references: [id])
+  ownerId    Int
+  startDate  DateTime @default(now())
+  spends     Spend[]
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Spend {
+  id          Int       @id @default(autoincrement())
+  cost        Int
+  category    String
+  description String?
+  date        DateTime?
+  repeat      String?
+  tracker     Tracker   @relation(fields: [trackerId], references: [id])
+  trackerId   Int
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+// CALCULATOR MODEL //
 
 model Calculator {
   id        Int        @id @default(autoincrement())
