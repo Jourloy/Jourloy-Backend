@@ -29,7 +29,7 @@ export class AuthController {
 		httpOnly: process.env.DEPLOYMENT_MODE === `local` ? false : true,
 		domain:
 			process.env.DEPLOYMENT_MODE === `local`
-				? null
+				? `localhost`
 				: `.jourloy.${process.env.DOMAIN_NAME}`,
 		secure: process.env.DEPLOYMENT_MODE === `local` ? false : true,
 		sameSite: process.env.DEPLOYMENT_MODE === `local` ? `none` : `lax`,
