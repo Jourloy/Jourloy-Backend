@@ -5,6 +5,7 @@ import helmet from "helmet";
 import pkg from "../package.json";
 import cookieParser from "cookie-parser";
 import {ValidationPipe} from "@nestjs/common";
+import * as Sentry from "@sentry/node";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 require(`dotenv`).config();
@@ -40,6 +41,13 @@ async function bootstrap() {
 	});
 	app.use(helmet());
 	app.useGlobalPipes(new ValidationPipe());
+
+	// Sentry
+
+	Sentry.init({
+		dsn: process.env.SENTRY_DSN,
+		tracesSampleRate: 1.0,
+	});
 
 	await app.listen(process.env.PORT || 10001, `0.0.0.0`);
 }
