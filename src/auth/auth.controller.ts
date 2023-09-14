@@ -64,6 +64,9 @@ export class AuthController {
 				? `http://localhost:10000`
 				: `https://jourloy.${process.env.DOMAIN_NAME}`;
 
+		this.logger.log(`User (${state.user.username}) logged in via google`);
+		this.logger.debug(`Redirect to ${uri}`);
+
 		response.redirect(
 			`${uri}/login/check?success=true&username=${state.user.username}&avatar=${state.user.avatar}`
 		);
@@ -119,6 +122,8 @@ export class AuthController {
 			...this.defaultCookieSettings,
 			maxAge: 1000,
 		});
+
+		this.logger.log(`User logged out`);
 
 		response.status(200).json(`OK`);
 	}
