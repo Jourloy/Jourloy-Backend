@@ -18,6 +18,7 @@
 - - [Test](test)
 - [Running the app](#running-the-app)
 - - [Docker](#docker)
+- - [PM2](#pm2)
 - - [Yarn](#yarn)
 - [Dev](#dev)
 - - [Swagger](#swagger)
@@ -55,19 +56,10 @@ $ yarn test:cov
 
 ### Running the app
 
-#### Docker (have troubles)
+#### Docker
 
 ```bash
 $ docker-compose up -d
-```
-
-#### Yarn
-```bash
-# Development
-$ yarn dev
-
-# Production
-$ yarn start
 ```
 
 #### PM2
@@ -79,11 +71,22 @@ $ yarn build
 # Start
 $ pm2 start dist/src/main.js
 ```
+
+#### Yarn
+
+```bash
+# Development
+$ yarn dev
+
+# Production
+$ yarn start
+```
+
 ## Dev
 
 ### Swagger
 
-You can open local swagger documentation on http://localhost:5000/api
+You can open local swagger documentation on /api
 
 ## Limits
 
