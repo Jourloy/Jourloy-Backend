@@ -1,0 +1,44 @@
+name: Deploy to server
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    name: Deploy
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v2.4.0
+        - name: Pull and run
+          uses: appleboy/ssh-action@master
+          with:
+            host: ${{ secrets.HOST }}
+            username: ${{ secrets.USERNAME }}
+            port: ${{ secrets.PORT }}
+            password: ${{ secrets.PASSWORD }}
+            script_stop: true
+            script: |
+              cd ${{ secrets.FOLDER }}
+              pm2 stop jrly-backend
+              > .env
+              echo NODE_ENV=${{ secrets.NODE_ENV }} >> .env
+              echo FRONTEND_PORT=${{ secrets.FRONTEND_PORT }} >> .env
+              echo SECRET=${{ secrets.SECRET }} >> .env
+              echo DEPLOYMENT_MODE=${{ secrets.DEPLOYMENT_MODE }} >> .env
+              echo DOMAIN_NAME=${{ secrets.DOMAIN_NAME }} >> .env
+              echo ADMIN_USERNAME=${{ secrets.ADMIN_USERNAME }} >> .env
+              echo ADMIN_PASSWORD=${{ secrets.ADMIN_PASSWORD }} >> .env
+              echo API_KEY=${{ secrets.API_KEY }} >> .env
+              echo GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }} >> .env
+              echo GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }} >> .env
+              echo DATABASE_URL=${{ secrets.DATABASE_URL }} >> .env
+              echo POSTGRES_DB=${{ secrets.POSTGRES_DB }} >> .env
+              echo POSTGRES_USER=${{ secrets.POSTGRES_USER }} >> .env
+              echo POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} >> .env
+              git pull
+              yarn
+              yarn build
+              pm2 start dist/src/main.js --name jrly-backend
