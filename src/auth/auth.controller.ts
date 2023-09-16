@@ -7,7 +7,6 @@ import {
 	UseGuards,
 	Headers,
 	Logger,
-	Session,
 	HttpException,
 } from "@nestjs/common";
 import {AuthService} from "./auth.service";
@@ -16,8 +15,8 @@ import {ApiExcludeEndpoint, ApiOperation, ApiTags} from "@nestjs/swagger";
 import {CookieOptions, Request, Response} from "express";
 import {ApiGuard} from "src/guards/api.guard";
 import {JwtGuard} from "../guards/jwt.guard";
-import { CurrentUser, ICurrentUser } from "src/decorators/user.decorator";
-import { ERR } from "src/enums/error.enum";
+import {CurrentUser, ICurrentUser} from "src/decorators/user.decorator";
+import {ERR} from "src/enums/error.enum";
 
 @ApiTags(`Auth`)
 @Controller(`auth`)
@@ -27,10 +26,13 @@ export class AuthController {
 	private logger = new Logger(AuthController.name);
 
 	private defaultCookieSettings: CookieOptions = {
-		httpOnly: true,
-		domain: `.jourloy.${process.env.DOMAIN_NAME}`,
-		secure: true,
-		sameSite: `lax`,
+		httpOnly: process.env.DEPLOYMENT_MODE === `local` ? false : true,
+		domain:
+			process.env.DEPLOYMENT_MODE === `local`
+				? `localhost`
+				: `.jourloy.${process.env.DOMAIN_NAME}`,
+		secure: process.env.DEPLOYMENT_MODE === `local` ? false : true,
+		sameSite: process.env.DEPLOYMENT_MODE === `local` ? `none` : `lax`,
 		maxAge: 1000 * 60 * 60 * 24,
 	};
 
@@ -40,7 +42,6 @@ export class AuthController {
 	async googleAuthCallback(
 		@Req() request: Request,
 		@Res() response: Response,
-		@Session() session: Record<string, any>
 	) {
 		const state = await this.authService.loginGoogle({
 			// @ts-ignore
@@ -57,10 +58,17 @@ export class AuthController {
 
 		response.cookie(`authorization_refresh`, `${state.refresh}`, this.defaultCookieSettings);
 		response.cookie(`authorization`, `${state.access}`, this.defaultCookieSettings);
-		session.user = state.user;
+
+		const uri =
+			process.env.DEPLOYMENT_MODE === `local`
+				? `http://localhost:10000`
+				: `https://jourloy.${process.env.DOMAIN_NAME}`;
+
+		this.logger.log(`User (${state.user.username}) logged in via google`);
+		this.logger.debug(`Redirect to ${uri}`);
 
 		response.redirect(
-			`https://jourloy.${process.env.DOMAIN_NAME}/login/check?success=true&username=${state.user.username}&avatar=${state.user.avatar}`
+			`${uri}/login/check?success=true&username=${state.user.username}&avatar=${state.user.avatar}`
 		);
 	}
 
@@ -82,6 +90,7 @@ export class AuthController {
 
 		response.cookie(`authorization_refresh`, `${state.refresh}`, this.defaultCookieSettings);
 		response.cookie(`authorization`, `${state.access}`, this.defaultCookieSettings);
+
 		response.status(200).send(`OK`);
 	}
 
@@ -90,30 +99,32 @@ export class AuthController {
 	@UseGuards(JwtGuard)
 	async updateTokens(@CurrentUser() user: ICurrentUser, @Res() response: Response) {
 		const state = await this.authService.updateTokens(user.refresh);
-		if (state === ERR.REFRESH_TOKEN_NOT_VALID) throw new HttpException(ERR.REFRESH_TOKEN_NOT_VALID, 401);
+
+		if (state === ERR.REFRESH_TOKEN_NOT_VALID)
+			throw new HttpException(ERR.REFRESH_TOKEN_NOT_VALID, 401);
 		if (state === ERR.USER_NOT_FOUND) throw new HttpException(ERR.USER_NOT_FOUND, 401);
 
 		response.cookie(`authorization_refresh`, `${state.refresh}`, this.defaultCookieSettings);
 		response.cookie(`authorization`, `${state.access}`, this.defaultCookieSettings);
+
 		response.status(200).json(state);
 	}
 
 	@Get(`/logout`)
 	@ApiOperation({summary: `Logout user`})
 	@UseGuards(JwtGuard)
-	async logout(@CurrentUser() user: ICurrentUser, @Res() response: Response) {
+	async logout(@Res() response: Response) {
 		response.cookie(`authorization_refresh`, `none`, {
-			httpOnly: true,
-			secure: true,
-			domain: `.jourloy.${process.env.DOMAIN_NAME}`,
+			...this.defaultCookieSettings,
 			maxAge: 1000,
 		});
 		response.cookie(`authorization`, `none`, {
-			httpOnly: true,
-			secure: true,
-			domain: `.jourloy.${process.env.DOMAIN_NAME}`,
+			...this.defaultCookieSettings,
 			maxAge: 1000,
 		});
+
+		this.logger.log(`User logged out`);
+
 		response.status(200).json(`OK`);
 	}
 }

@@ -1,6 +1,16 @@
 version: '3.7'
 
 services:
+    postgres:
+        container_name: Jourloy-PostgresSQL
+        image: postgres:latest
+        environment:
+            POSTGRES_DB: "${POSTGRES_DB}"
+            POSTGRES_USER: "${POSTGRES_USER}"
+            POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
+        ports:
+            - "5432:5432"
+
     app:
         container_name: Jourloy-Backend
         build:
@@ -12,8 +22,10 @@ services:
         env_file:
             - .env
         ports:
-            - "10001:10001"
+            - "${PORT}:${PORT}"
         restart: always
+        depends_on:
+            - postgres
 
 volumes:
     app:

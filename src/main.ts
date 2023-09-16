@@ -3,9 +3,7 @@ import {AppModule} from "./app.module";
 import {DocumentBuilder, SwaggerModule} from "@nestjs/swagger";
 import helmet from "helmet";
 import pkg from "../package.json";
-import session from "express-session";
 import cookieParser from "cookie-parser";
-import MongoStore from "connect-mongo";
 import {ValidationPipe} from "@nestjs/common";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -22,8 +20,7 @@ async function bootstrap() {
 
 	const config = new DocumentBuilder()
 		.setTitle(`Tracker`)
-		.setDescription(`Tracker app of Twyxify ecosystem`)
-		.setExternalDoc(`Github`, `https://github.com/Twyxify/Tracker-Backend`)
+		.setDescription(`Tracker app of JOURLOY ecosystem`)
 		.setVersion(pkg.version)
 		.build();
 	const document = SwaggerModule.createDocument(app, config);
@@ -32,34 +29,19 @@ async function bootstrap() {
 
 	// Defence
 
+	const corsUrls =
+		process.env.DEPLOYMENT_MODE === `local`
+			? [`http://localhost:${process.env.FRONTEND_PORT}`]
+			: [`https://jourloy.${process.env.DOMAIN_NAME}`];
+
 	app.enableCors({
-		origin: [`https://jourloy.${process.env.DOMAIN_NAME}`],
+		origin: corsUrls,
 		credentials: true,
 	});
 	app.use(helmet());
 	app.useGlobalPipes(new ValidationPipe());
 
-	// Sessions
-
-	app.use(
-		session({
-			store: MongoStore.create({
-				mongoUrl: `mongodb://${process.env.MONGO_HOST}/sessions`,
-				ttl: 1000 * 60,
-				autoRemove: `native`,
-			}),
-			secret: process.env.SECRET,
-			resave: false,
-			saveUninitialized: false,
-			cookie: {
-				maxAge: 1000 * 60,
-				domain: `.jourloy.${process.env.DOMAIN_NAME}`,
-				secure: true,
-			},
-		})
-	);
-
-	await app.listen(10001, `0.0.0.0`);
+	await app.listen(process.env.PORT || 10001, `0.0.0.0`);
 }
 
 bootstrap().then();
