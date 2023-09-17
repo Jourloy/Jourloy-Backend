@@ -12,7 +12,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, `google`) {
 			callbackURL: `${
 				process.env.DEPLOYMENT_MODE === `local`
 					? `http://localhost:${process.env.PORT}`
-					: `https://jourloy.${process.env.DOMAIN_NAME}`
+					: `https://api.jourloy.${process.env.DOMAIN_NAME}`
 			}/auth/google/callback`,
 			scope: [`profile`, `email`],
 		});
