@@ -7,7 +7,7 @@
   "license": "UNLICENSED",
   "scripts": {
     "prebuild": "rimraf dist",
-    "build": "nest build",
+    "build": "nest build && yarn sentry:sourcemaps",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
     "dev": "npx prisma migrate dev && nest start --watch",
@@ -20,7 +20,8 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "prisma:generate": "npx prisma generate",
-    "prisma:migrate": "npx prisma migrate"
+    "prisma:migrate": "npx prisma migrate",
+    "sentry:sourcemaps": "sentry-cli sourcemaps inject --org jourloy --project dev-backend ./dist && sentry-cli --url https://sentry.jourloy.com/ sourcemaps upload --org jourloy --project dev-backend ./dist"
   },
   "dependencies": {
     "@nestjs/common": "^8.0.0",
@@ -32,6 +33,7 @@
     "@nestjs/swagger": "^7.0.4",
     "@nestjs/throttler": "^4.1.0",
     "@prisma/client": "^5.1.1",
+    "@sentry/node": "^7.69.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.0",
     "connect-mongo": "^5.0.0",
