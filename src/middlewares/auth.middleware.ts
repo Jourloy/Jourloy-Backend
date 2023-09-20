@@ -13,6 +13,7 @@ export class AuthMiddleware implements NestMiddleware {
 		const l = {
 			id: ``,
 			type: ``,
+			role: ``,
 			access: ``,
 			refresh: ``,
 		};
@@ -35,6 +36,7 @@ export class AuthMiddleware implements NestMiddleware {
 				l.id = decode[`id`];
 				l.access = accessToken;
 				l.type = decode[`type`];
+				l.role = decode[`role`];
 				res.locals = l;
 				next();
 			} catch (e) {

@@ -11,11 +11,11 @@ export class AuthService {
 
 	private logger = new Logger(AuthService.name);
 
-	private generateTokens(id: string | number, type: `google` | `local`) {
-		const refresh = jwt.sign({id: id, type: type}, process.env.SECRET, {
+	private generateTokens(id: string | number, type: `google` | `local`, role: string) {
+		const refresh = jwt.sign({id: id, type: type, role: role}, process.env.SECRET, {
 			expiresIn: `1w`,
 		});
-		const access = jwt.sign({id: id, type: type}, process.env.SECRET, {
+		const access = jwt.sign({id: id, type: type, role: role}, process.env.SECRET, {
 			expiresIn: `3d`,
 		});
 		return [refresh, access];
@@ -38,7 +38,8 @@ export class AuthService {
 
 		const [newRefresh, newAccess] = this.generateTokens(
 			decoded[`id`],
-			decoded[`type`]
+			decoded[`type`],
+			user.role,
 		);
 
 		const updatedUser = await this.userService.updateTokens(user.id, newRefresh);
@@ -53,8 +54,8 @@ export class AuthService {
 	public async loginGoogle(props: IGoogleUser) {
 		const user = await this.userService.loginGoogle(props);
 		if (user === ERR.DATABASE || user === ERR.USER_EXIST) return user;
-
-		const [newRefresh, newAccess] = this.generateTokens(props.googleId, `google`);
+		
+		const [newRefresh, newAccess] = this.generateTokens(props.googleId, `google`, user.role);
 		const updatedUser = await this.userService.updateTokens(user.id, newRefresh);
 		if (updatedUser === ERR.DATABASE || updatedUser === ERR.USER_NOT_FOUND) return updatedUser;
 
@@ -71,7 +72,7 @@ export class AuthService {
 		const user = await this.userService.get({apiKey: apiKey});
 		if (!user) return ERR.USER_NOT_FOUND;
 
-		const [newRefresh, newAccess] = this.generateTokens(user.id, `local`);
+		const [newRefresh, newAccess] = this.generateTokens(user.id, `local`, user.role);
 		const updatedUser = await this.userService.updateTokens(user.id, newRefresh);
 
 		delete user.password;
