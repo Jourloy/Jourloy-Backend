@@ -41,6 +41,8 @@ Don't forget create `.env` from `.env.sample` and add data
 
 If you want start server locally, so you should set `DEPLOYMENT_MODE` to `local`, else to any other value
 
+On local deploy safari is not supported
+
 ### Test
 
 ```bash

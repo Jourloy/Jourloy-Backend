@@ -20,7 +20,6 @@ export class UserService {
 		if (!isAdmin) {
 			delete user.password;
 			delete user.refreshTokens;
-			delete user.role;
 			delete user.apiKey;
 		}
 

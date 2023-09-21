@@ -26,12 +26,12 @@ export class AuthController {
 	private logger = new Logger(AuthController.name);
 
 	private defaultCookieSettings: CookieOptions = {
-		httpOnly: process.env.DEPLOYMENT_MODE === `local` ? false : true,
+		httpOnly: true,
 		domain:
 			process.env.DEPLOYMENT_MODE === `local`
 				? `localhost`
 				: `.jourloy.${process.env.DOMAIN_NAME}`,
-		secure: process.env.DEPLOYMENT_MODE === `local` ? false : true,
+		secure: true,
 		sameSite: process.env.DEPLOYMENT_MODE === `local` ? `none` : `lax`,
 		maxAge: 1000 * 60 * 60 * 24,
 	};
@@ -64,7 +64,7 @@ export class AuthController {
 				? `http://localhost:10000`
 				: `https://jourloy.${process.env.DOMAIN_NAME}`;
 
-		this.logger.log(`User (${state.user.username}) logged in via google`);
+		this.logger.log(`User (${state.user.username}) logged in google`);
 		this.logger.debug(`Redirect to ${uri}`);
 
 		response.redirect(

@@ -7,6 +7,7 @@ import {ThrottlerModule} from "@nestjs/throttler";
 import {AuthMiddleware} from "./middlewares/auth.middleware";
 import {PartyModule} from "./party/party.module";
 import { TrackerModule } from './tracker/tracker.module';
+import { AdminModule } from './admin/admin.module';
 
 @Module({
 	imports: [
@@ -19,6 +20,7 @@ import { TrackerModule } from './tracker/tracker.module';
 		UserModule,
 		PartyModule,
 		TrackerModule,
+		AdminModule,
 	],
 	controllers: [AppController],
 	providers: [AppService],
