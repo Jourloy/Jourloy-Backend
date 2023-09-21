@@ -29,7 +29,7 @@ export class TrackerUpdateDTO {
 	@IsNumber()
 	dayLimit: number;
 
-	@ApiProperty({example: new Date()})
+	@ApiProperty({example: new Date().toString()})
 	@IsNotEmpty()
 	@IsString()
 	startDate: string;

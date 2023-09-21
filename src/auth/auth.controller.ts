@@ -68,7 +68,7 @@ export class AuthController {
 		this.logger.debug(`Redirect to ${uri}`);
 
 		response.redirect(
-			`${uri}/login/check?success=true&username=${state.user.username}&avatar=${state.user.avatar}`
+			`${uri}/login/check?success=true&username=${state.user.username}&avatar=${state.user.avatar}&role=${state.user.role}`
 		);
 	}
 

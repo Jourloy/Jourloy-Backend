@@ -8,6 +8,7 @@ import {AuthMiddleware} from "./middlewares/auth.middleware";
 import {PartyModule} from "./party/party.module";
 import { TrackerModule } from './tracker/tracker.module';
 import { AdminModule } from './admin/admin.module';
+import { DarkModule } from './dark/dark.module';
 
 @Module({
 	imports: [
@@ -21,6 +22,7 @@ import { AdminModule } from './admin/admin.module';
 		PartyModule,
 		TrackerModule,
 		AdminModule,
+		DarkModule,
 	],
 	controllers: [AppController],
 	providers: [AppService],

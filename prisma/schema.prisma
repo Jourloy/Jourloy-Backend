@@ -89,3 +89,30 @@ model Position {
   calculator   Calculator @relation(fields: [calculatorId], references: [id])
   calculatorId Int
 }
+
+// DARK MODEL //
+
+model DarkAttribute {
+  id            Int                  @id @default(autoincrement())
+  enName        String
+  ruName        String
+  enDescription String
+  ruDescription String
+  levels        DarkAttributeLevel[]
+}
+
+model DarkAttributeLevel {
+  id          Int           @id @default(autoincrement())
+  attribute   DarkAttribute @relation(fields: [attributeId], references: [id])
+  attributeId Int
+  depth       Int
+  classes     String[]
+}
+
+model DarkClass {
+  id            Int    @id @default(autoincrement())
+  enName        String
+  ruName        String
+  enDescription String
+  ruDescription String
+}
