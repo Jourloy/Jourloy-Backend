@@ -1,0 +1,32 @@
+version: '3.7'
+
+services:
+    postgres:
+        container_name: jourloy-postgres
+        image: postgres:latest
+        environment:
+            POSTGRES_DB: "${POSTGRES_DB}"
+            POSTGRES_USER: "${POSTGRES_USER}"
+            POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
+        ports:
+            - "5432:5432"
+
+    app:
+        container_name: jourloy-backend
+        build:
+            context: .
+            dockerfile: Dockerfile.dev
+        volumes:
+            - .:/app
+            - /app/node_modules
+        command: yarn dev
+        env_file:
+            - .env
+        ports:
+            - "${PORT}:${PORT}"
+        restart: always
+        depends_on:
+            - postgres
+
+volumes:
+    app:

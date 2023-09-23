@@ -35,13 +35,13 @@ $ yarn install
 
 #### .env
 
-Don't forget create `.env` from `.env.sample` and add data
+Don't forget create `.env` from `.env.sample` and add data.
 
 ##### Deployment mode
 
-If you want start server locally, so you should set `DEPLOYMENT_MODE` to `local`, else to any other value
+If you want start server locally, so you should set `DEPLOYMENT_MODE` to `local`, else to any other value.
 
-On local deploy safari is not supported
+On local deploy safari is not supported.
 
 ### Test
 
@@ -60,8 +60,39 @@ $ yarn test:cov
 
 #### Docker
 
+##### Full local development
+
 ```bash
+# Start
+$ docker-compose -f ./docker-compose.local.yml up -d
+
+# Stop
+$ docker-compose -f ./docker-compose.local.yml down
+```
+
+It's create dev container of backend and local database. Check `.env` for correct connection to
+Docker database.
+
+##### Dev development
+
+```bash
+# Start
+$ docker-compose -f ./docker-compose.dev.yml up -d
+
+# Stop
+$ docker-compose -f ./docker-compose.dev.yml down
+```
+
+It's create only dev container of backend. You should connect to your database.
+
+##### Production
+
+```bash
+# Start
 $ docker-compose up -d
+
+# Stop
+$ docker-compose down
 ```
 
 #### PM2
