@@ -19,4 +19,10 @@ export enum ERR {
 	// Tracker
 	TRACKER_EXIST = `Tracker already exist`,
 	TRACKER_NOT_FOUND = `Tracker not found`,
+
+	// Dark
+	DARK_ATTRIBUTE_EXIST = `Dark attribute already exist`,
+	DARK_ATTRIBUTE_NOT_FOUND = `Dark attribute not found`,
+	DARK_CLASS_EXIST = `Dark class already exist`,
+	DARK_CLASS_NOT_FOUND = `Dark class not found`,
 }

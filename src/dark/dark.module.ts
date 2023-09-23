@@ -1,9 +1,11 @@
-import { Module } from '@nestjs/common';
-import { DarkService } from './dark.service';
-import { DarkController } from './dark.controller';
+import {Module} from "@nestjs/common";
+import {DarkService} from "./dark.service";
+import {DarkController} from "./dark.controller";
+import {PrismaModule} from "src/database/prisma.module";
 
 @Module({
-  controllers: [DarkController],
-  providers: [DarkService]
+	imports: [PrismaModule],
+	controllers: [DarkController],
+	providers: [DarkService],
 })
 export class DarkModule {}
