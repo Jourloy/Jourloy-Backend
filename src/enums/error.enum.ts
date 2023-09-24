@@ -25,4 +25,6 @@ export enum ERR {
 	DARK_ATTRIBUTE_NOT_FOUND = `Dark attribute not found`,
 	DARK_CLASS_EXIST = `Dark class already exist`,
 	DARK_CLASS_NOT_FOUND = `Dark class not found`,
+	DARK_LEVEL_EXIST = `Dark level already exist`,
+	DARK_LEVEL_NOT_FOUND = `Dark level not found`,
 }

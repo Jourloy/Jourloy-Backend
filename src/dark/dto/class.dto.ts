@@ -8,7 +8,6 @@ export class CreateClassDTO {
 	enName: string;
 
 	@ApiProperty({example: ``})
-	@IsNotEmpty()
 	@IsString()
 	enDescription: string;
 
@@ -18,7 +17,6 @@ export class CreateClassDTO {
 	ruName: string;
 
 	@ApiProperty({example: ``})
-	@IsNotEmpty()
 	@IsString()
 	ruDescription: string;
 }
@@ -30,7 +28,6 @@ export class UpdateClassDTO {
 	enName: string;
 
 	@ApiProperty({example: ``})
-	@IsNotEmpty()
 	@IsString()
 	enDescription: string;
 
@@ -40,7 +37,6 @@ export class UpdateClassDTO {
 	ruName: string;
 
 	@ApiProperty({example: ``})
-	@IsNotEmpty()
 	@IsString()
 	ruDescription: string;
 }

@@ -1,8 +1,9 @@
 import {Injectable, Logger} from "@nestjs/common";
-import { PrismaService } from "src/database/prisma.service";
-import { CreateAttributeDTO, UpdateAttributeDTO } from "./dto/attribute.dto";
-import { ERR } from "src/enums/error.enum";
-import { CreateClassDTO, UpdateClassDTO } from "./dto/class.dto";
+import {PrismaService} from "src/database/prisma.service";
+import {CreateAttributeDTO, UpdateAttributeDTO} from "./dto/attribute.dto";
+import {ERR} from "src/enums/error.enum";
+import {CreateClassDTO, UpdateClassDTO} from "./dto/class.dto";
+import {CreateLevelDTO, UpdateLevelDTO} from "./dto/level.dto";
 
 @Injectable()
 export class DarkService {
@@ -91,4 +92,36 @@ export class DarkService {
 	}
 
 	// Levels //
+
+	public async createLevel(props: CreateLevelDTO) {
+		const level = await this.prisma.darkAttributeLevel.findFirst({
+			where: {depth: props.depth, attributeId: props.attributeId},
+		});
+		if (level) return ERR.DARK_LEVEL_EXIST;
+
+		const created = await this.prisma.darkAttributeLevel.create({data: props});
+		if (!created) return ERR.DATABASE;
+
+		return created;
+	}
+
+	public async updateLevel(id: number, props: UpdateLevelDTO) {
+		const level = await this.prisma.darkAttributeLevel.findUnique({where: {id}});
+		if (!level) return ERR.DARK_LEVEL_NOT_FOUND;
+
+		const updated = await this.prisma.darkAttributeLevel.update({where: {id}, data: props});
+		if (!updated) return ERR.DATABASE;
+
+		return updated;
+	}
+
+	public async deleteLevel(id: number) {
+		const level = await this.prisma.darkAttributeLevel.findUnique({where: {id}});
+		if (!level) return ERR.DARK_LEVEL_NOT_FOUND;
+
+		const deleted = await this.prisma.darkAttributeLevel.delete({where: {id}});
+		if (!deleted) return ERR.DATABASE;
+
+		return deleted;
+	}
 }
