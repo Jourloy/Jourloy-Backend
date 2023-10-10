@@ -42,5 +42,7 @@ ormconfig.json
 package-lock.json
 yarn.log
 yarn.lock
+bun.lockb
+
 # Sentry Auth Token
 .sentryclirc
