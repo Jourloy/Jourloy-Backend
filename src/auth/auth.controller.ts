@@ -31,7 +31,7 @@ export class AuthController {
 			process.env.DEPLOYMENT_MODE === `local`
 				? `localhost`
 				: `.jourloy.${process.env.DOMAIN_NAME}`,
-		secure: process.env.DEPLOYMENT_MODE === `local` ? false : true,
+		secure: true,
 		sameSite: process.env.DEPLOYMENT_MODE === `local` ? `none` : `lax`,
 		maxAge: 1000 * 60 * 60 * 24,
 	};

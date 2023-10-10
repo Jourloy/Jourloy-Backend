@@ -26,14 +26,12 @@ export class DarkController {
 	}
 
 	@Get(`/class/all`)
-	@UseGuards(JwtGuard)
 	async getAllClasses(@Res() response: Response) {
 		const state = await this.darkService.getAllClasses();
 		response.status(200).json(state);
 	}
 
 	@Get(`/class/:id`)
-	@UseGuards(JwtGuard)
 	async getClass(@Param(`id`) id: string, @Res() response: Response) {
 		const state = await this.darkService.getOneClass(+id);
 		response.status(200).json(state);
@@ -52,14 +50,12 @@ export class DarkController {
 	}
 
 	@Get(`/attribute/all`)
-	@UseGuards(JwtGuard)
 	async getAllAttributes(@Res() response: Response) {
 		const state = await this.darkService.getAllAttributes();
 		response.status(200).json(state);
 	}
 
 	@Get(`/attribute/:id`)
-	@UseGuards(JwtGuard)
 	async getAttribute(@Param(`id`) id: string, @Res() response: Response) {
 		const state = await this.darkService.getOneAttribute(+id);
 		response.status(200).json(state);
