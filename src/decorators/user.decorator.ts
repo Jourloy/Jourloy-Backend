@@ -20,5 +20,5 @@ export type ICurrentUser = {
 	id: string;
 } | {
 	type: `local`;
-	id: number;
+	id: string;
 })

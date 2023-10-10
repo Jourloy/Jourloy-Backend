@@ -11,6 +11,7 @@ import {AdminModule} from "./admin/admin.module";
 import {DarkModule} from "./dark/dark.module";
 import {ConfigModule, ConfigService} from "@nestjs/config";
 import {MongooseModule} from "@nestjs/mongoose";
+import { SpendModule } from './spend/spend.module';
 
 @Module({
 	imports: [
@@ -35,6 +36,7 @@ import {MongooseModule} from "@nestjs/mongoose";
 		TrackerModule,
 		AdminModule,
 		DarkModule,
+		SpendModule,
 	],
 	controllers: [AppController],
 	providers: [AppService],
