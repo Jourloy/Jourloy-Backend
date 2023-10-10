@@ -44,9 +44,9 @@ export class AuthService {
 
 		const updatedUser = await this.userService.updateTokens(user.id, newRefresh);
 
-		delete user.googleAccount;
-		delete user.systemAccount;
+		delete user.password;
 		delete user.refreshTokens;
+		delete user.googleId;
 
 		return {refresh: newRefresh, access: newAccess, user: updatedUser};
 	}
@@ -59,9 +59,9 @@ export class AuthService {
 		const updatedUser = await this.userService.updateTokens(user.id, newRefresh);
 		if (updatedUser === ERR.DATABASE || updatedUser === ERR.USER_NOT_FOUND) return updatedUser;
 
-		delete user.googleAccount;
-		delete user.systemAccount;
+		delete user.password;
 		delete user.refreshTokens;
+		delete user.googleId;
 
 		return {refresh: newRefresh, access: newAccess, user: updatedUser};
 	}
@@ -75,9 +75,9 @@ export class AuthService {
 		const [newRefresh, newAccess] = this.generateTokens(user.id, `local`, user.role);
 		const updatedUser = await this.userService.updateTokens(user.id, newRefresh);
 
-		delete user.googleAccount;
-		delete user.systemAccount;
+		delete user.password;
 		delete user.refreshTokens;
+		delete user.googleId;
 
 		return {refresh: newRefresh, access: newAccess, user: updatedUser};
 	}

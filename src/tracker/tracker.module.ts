@@ -2,11 +2,10 @@ import {Module} from "@nestjs/common";
 import {TrackerService} from "./tracker.service";
 import {TrackerController} from "./tracker.controller";
 import {UserModule} from "src/user/user.module";
-import {MongooseModule} from "@nestjs/mongoose";
-import {TrackerSchema} from "./schemas/tracker.schema";
+import {PrismaModule} from "src/database/prisma.module";
 
 @Module({
-	imports: [MongooseModule.forFeature([{name: `Tracker`, schema: TrackerSchema}]), UserModule],
+	imports: [PrismaModule, UserModule],
 	controllers: [TrackerController],
 	providers: [TrackerService],
 })
